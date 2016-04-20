@@ -1,6 +1,7 @@
-/****** GLOBAL VARIABLES *******/
+//they set up some global variables, we'll probably want to do the same for simplicity's sake (even if it's not optimal)
 var mapWidth = 750, mapHeight = 410;
-var keyArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"];
+//unsure if we'll include 2016 -- we have some data for it, but obviously it is not complete yet
+var keyArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016"];
 var Category = ["totalExecuted", "totalOvertime", "method", "race", "age"];
 var expressed;
 var yearExpressed;
@@ -13,31 +14,35 @@ var otherMenuWidth = 200, otherMenuHeight = 70;
 var menuInfoWidth = 250, menuInfoHeight = 100;
 var textArray = ["Total Executions, 1977-2015", "Trends of execution 1977-2015", "Methods of Execution","Race of those executed", "Average age of execution by year", "aaa", "bbb"]
 var linkArray = ["<a href = '#overview'> Here is an overview of capital punishment laws over the years.</a>", "<a href = '#method'> What methods are still used? Why?</a>"];
-var removeCPC;
-var removeAbortion;
 var joinedJson; //Variable to store the USA json combined with all attribute data
 
-// SET UP ARRAYS FOR CATEGORIES OF EACH VARIABLE
-    //Variable array for Overview
-    var arrayRace = [  "Black",       
+//arrays for categories of each variable
+    //race array (data is complete!)
+    var arrayRace = [   "Black",       
                         "White",       
                         "Latino",          
-                        "Asian"];     
+                        "Asian",
+                        "Native American"];     
 
-    //Variable array for Prohibited At
+    //array for method (data is complete!)
     var arrayMethod = [ "Lethal Injection",     
                         "Electrocution",      
                         "Hanging",      
-                        "Firing Squad"]; 
+                        "Firing Squad",
+                        "Gas Chamber"];
+                //array for law (Gaby is working on the data!, categories may need to be altered)
+    var arrayLaw = [ "Legal",     
+                    "Illegal",      
+                    "Moratorium"]; 
 
 //color array with different color values for the overview
-    var colorArrayOverview = [];    
+    var colorArrayRace = [];    
 
     //Different hue color array for method
     var colorArrayMethod = [ ];  
 
-    // Color array for legal/illegal (two colors, different hues?)
-    var colorArrayCounseling = [ ];  
+    // Color array for legal/illegal/moratorium (three colors, different hues?)
+    var colorArrayLaw = [ ];  
 
 
 //Variables for colorscale and choropleth
@@ -49,7 +54,7 @@ var timelineFeatureArray = [];
 var colorizeChart; 
 var chartHeight = 300;
 var chartWidth = 700;
-//are squares the best way to represent this? 
+//are squares the best way to represent this for our data? 
 // var squareWidth = 10;
 // var squareHeight = 10;
 var chartRect;
@@ -68,10 +73,10 @@ function initialize(){
     yearExpressed = keyArray[keyArray.length];
     animateMap(yearExpressed, colorize, yearExpressedText);
     setMap();
-    createMenu(arrayOverview, colorArrayOverview, "Grading Scale: ", textArray[0], linkArray[0]);
+    createMenu(arrayOverview, colorArrayOverview, "Race:", textArray[0], linkArray[0]);
     createInset();
-    $(".Overview").css({'background-color': '#CCCCCC','color': '#ffffff'});
-    //disables buttons on load
+    $(".Race").css({'background-color': '#CCCCCC','color': '#ffffff'});
+    //this disables buttons on load -- do we want to do this too?
     $('.stepBackward').prop('disabled', true);
     $('.play').prop('disabled', true);
     $('.pause').prop('disabled', true);
@@ -86,7 +91,7 @@ function setMap(){
         .attr("height", mapHeight)
         .attr("class", "us-map");
     
-    //Create a Albers equal area conic projection because choropleth
+    //Create a Albers equal area conic projection because choropleth -- that's what we want too :D
     var projection = d3.geo.albersUsa()
         .scale(1100)
         .translate([mapWidth / 2, mapHeight / 2]);
@@ -96,47 +101,54 @@ function setMap(){
         .projection(projection);
     
     queue()
-    //these csvs don't exist yet but this is what we'll name them
-        .defer(d3, csv), "/data/lawovertime.csv") //what if we did a law over time choropleth as our initial map?
-        .defer(d3.csv, "/data/totalexecuted.csv") //csv of the total executed 77-15 (summed)
-        .defer(d3.csv, "/data/executedovertime.csv") //csv of the total executed over time (cycles through separate choropleth)
-        .defer(d3.csv, "/data/race.csv") //race of those executed
-        .defer(d3.csv, "/data/method.csv") //method of those executed
-        .defer(d3.json, "/data/usa.topojson")
+    //we have... so many CSVs. omg.
+        .defer(d3.csv, "/data/Races/Black.csv") //black executions over time 1977-2016 (DONE)
+        .defer(d3.csv, "/data/Races/White.csv") //white executions over time 1977-2016 (DONE)
+        .defer(d3.csv, "/data/Races/Asian.csv") //asian executions over time 1977-2016 (DONE)
+        .defer(d3.csv, "/data/Races/NativeAmerican.csv") //native american executions over time 1977-2016 (DONE)
+        .defer(d3.csv, "/data/Races/Latino.csv") //latino executions over time 1977-2016 (DONE)
+        .defer(d3.csv, "/data/Methods/Electrocution.csv") ////electrocution executions over time 1977-2016 (DONE)
+        .defer(d3.csv, "/data/Methods/FiringSquad.csv") ////firing squad executions over time 1977-2016 (DONE)
+        .defer(d3.csv, "/data/Methods/GasChamber.csv") //gas chamber executions over time 1977-2016 (DONE)
+        .defer(d3.csv, "/data/Methods/Hanging.csv") //hanging executions over time 1977-2016 (DONE)
+        .defer(d3.csv, "/data/Methods/LethalInjection.csv") //lethal injection executions over time 1977-2016 (DONE)
+        .defer(d3.csv, "/data/Laws/Laws.csv") ////law changes about executions over time 1977-2016 (Gaby working on this)
+        .defer(d3.csv, "/data/TotalExecutions/TotalOverTime.csv") //total executions over time 1977-2016 (Gaby working on this)
+        .defer(d3.csv, "/data/TotalExecutions/Total2015.csv") //total executions 2015 (Not done/assigned, do we want this as default map?)
+        .defer(d3.json, "/data/continentalUS.topojson") //generalized topo of the continental US
         .await(callback);
-    
     //create menu 
     drawMenu();
         
-    //retrieve and process json file and data
+    //handy dandy callback function
     function callback(error, overall, overtime, race, method){
 
         //Variable to store the USA json with all attribute data
-        joinedJson = topojson.feature(usa, usa.objects.states).features;
+        joinedJson = topojson.feature(continentalUS, continentalUS.objects.states).features;
         colorize = colorScale(joinedJson);
 
-        //Create an Array with CSV's loaded
+        //Create an array with CSVs loaded... update these later when we're sure what we want included
         var csvArray = [overall, overtime, race, method];
-        //Names for the overall Label we'd like to assign them
+        //Names for the overall label we'd like to assign them.. again, edit later when we know what we want
         var attributeNames = ["overall", "overtime", "race", "method"];
         //For each CSV in the array, run the LinkData function
         for (csv in csvArray){
-            LinkData(usa, csvArray[csv], attributeNames[csv]);
+            LinkData(continentalUS, csvArray[csv], attributeNames[csv]);
         };
 
         function LinkData(topojson, csvData, attribute){
-             var jsonStates = usa.objects.states.geometries;
+             var jsonStates = continentalUS.objects.states.geometries;
 
             //loop through the csv and tie it to the json's via the State Abbreviation
              for(var i=0; i<csvData.length; i++){
                 var csvState = csvData[i];
-                var csvLink = csvState.adm;
+                var csvLink = csvState.state;
 
                 //loop through states and assign the data to the rigth state
                 for(var a=0; a<jsonStates.length; a++){
 
-                    //If postal code = link, we good
-                    if (jsonStates[a].properties.postal == csvLink){
+                    //check if postal code = link
+                    if (jsonStates[a].properties.state == csvLink){
                         attrObj = {};
 
                         //one more loop to assign key/value pairs to json object
@@ -159,7 +171,7 @@ function setMap(){
             .enter()
             .append("path")
             .attr("class", function(d){ 
-                return "states " + d.properties.postal;
+                return "states " + d.properties.postal; //we don't want postal here -- figure out what we do want
             })
             .style("fill", function(d){
                 return choropleth(d, colorize);
@@ -175,40 +187,21 @@ function setMap(){
                 return choropleth(d, colorize);
             })
 
-        //data stuff for overlay
+        //here is where they did some overlay stuff -- this might be how we do the prop symbols?
         var cpcCount = [];
         for (var a = 0; a < cpc.features.length; a++){
             var cpc_count = cpc.features[a].properties.Count;
             cpcCount.push(Number(cpc_count));
         }
         
-        //creates min and max of cpcs
-        var cpcMin = Math.min.apply(Math, cpcCount);
-        var cpcMax = Math.max.apply(Math, cpcCount);
 
-        //creates radius for CPC
+        //this part creates the radius -- let's keep this in mind cuz we'll be doing lots of them
         var cpcRadius = d3.scale.sqrt()
             .domain([cpcMin, cpcMax])
             .range([2, 20]);
-        
-        //for abortion provider
-        var abortionCount = [];
-        for (var b = 0; b < abortionprovider.features.length; b++){
-            var abortion_count = abortionprovider.features[b].properties.Count;
-            abortionCount.push(Number(abortion_count));
-        }
-        
-        //creates min and max of abortion providers
-        var abortionMin = Math.min.apply(Math, abortionCount);
-        var abortionMax = Math.max.apply(Math, abortionCount);
-        
-        //creates radius 
-        var abortionRadius = d3.scale.sqrt()
-            .domain([abortionMin, abortionMax])
-            .range([2, 23]);
 
         changeAttribute(yearExpressed, colorize);
-        overlay(path, cpcRadius, abortionRadius, map, cpc, abortionprovider);
+        overlay(path, map, otherthings, someotherthings);
     }; //END callback
 }; //END setmap
 
@@ -224,7 +217,7 @@ function drawMenu(){
         $('.play').prop('disabled', true);
         $('.pause').prop('disabled', true);
         $('.stepForward').prop('disabled', true);
-        d3.selectAll(".menu-options div").style({'background-color': '#e1e1e1','color': '#969696'});
+        d3.selectAll(".menu-options div").style({'background-color': '#CCCCCCC','color': '#CCCCCC'});
         d3.selectAll(".states").style("fill", function(d){
                 return choropleth(d, colorize);
             })
@@ -233,20 +226,20 @@ function drawMenu(){
                     return choropleth(d, colorize);
             });
         createMenu(arrayOverview, colorArrayOverview, "Grading Scale: ", textArray[0], linkArray[0]);
-        $(".Overview").css({'background-color': '#CCCCCC','color': '#333333'});
+        $(".Overview").css({'background-color': '#CCCCCC','color': '#CCCCCC'});
         //removes chart
         var oldChart = d3.selectAll(".chart").remove();
         var oldRects = d3.selectAll(".chartRect").remove();
     });
     
-    //click changes for Prohibited At
+    //a click to change the choropleth displayed with info about the buttons. We'll need something like this too.
      $(".Prohibited").click(function(){ 
         expressed = Category[1];
         $('.stepBackward').prop('disabled', false);
         $('.play').prop('disabled', false);
         $('.pause').prop('disabled', false);
         $('.stepForward').prop('disabled', false);
-        d3.selectAll(".menu-options div").style({'background-color': '#e1e1e1','color': '#969696'});
+        d3.selectAll(".menu-options div").style({'background-color': '#CCCCCC','color': '#CCCCCC'});
         d3.selectAll(".states").style("fill", function(d){
                 return choropleth(d, colorize);
             })
@@ -254,7 +247,7 @@ function drawMenu(){
                 .text(function(d) {
                     return choropleth(d, colorize);
             });
-        createMenu(arrayProhibited, colorArrayProhibited, "Prohibited At: ", textArray[1], linkArray[1]);
+        createMenu(arrayProhibited, colorArrayProhibited, "blah blah ", textArray[1], linkArray[1]);
         $(".Prohibited").css({'background-color': '#CCCCCC','color': '#333333'});
         //removes and creates correct chart
         var oldChart = d3.select(".chart").remove();
@@ -262,7 +255,7 @@ function drawMenu(){
         setChart(yearExpressed);
      });
     
-    //click changes for mandated counseling
+    //another one for counseling, same as above but a different category. We'll need to build something like this too.
     $(".Counseling").click(function(){  
         expressed = Category[2];
         $('.stepBackward').prop('disabled', false);
@@ -285,14 +278,14 @@ function drawMenu(){
         setChart(yearExpressed);
         });
     
-    //click changes for waiting period
+    //aaaand again. Not sure how many of these we need.
     $(".Waiting").click(function(){ 
         expressed = Category[3];
         $('.stepBackward').prop('disabled', false);
         $('.play').prop('disabled', false);
         $('.pause').prop('disabled', false);
         $('.stepForward').prop('disabled', false);
-        d3.selectAll(".menu-options div").style({'background-color': '#e1e1e1','color': '#969696'});
+        d3.selectAll(".menu-options div").style({'background-color': '#CCCCCC','color': '#CCCCCC'});
         d3.selectAll(".states").style("fill", function(d){
                 return choropleth(d, colorize);
             })
@@ -308,54 +301,9 @@ function drawMenu(){
         setChart(yearExpressed);
         });
     
-    //click changes for parental consent
-    $(".Parental").click(function(){  
-        expressed = Category[4];
-         $('.stepBackward').prop('disabled', false);
-         $('.play').prop('disabled', false);
-         $('.pause').prop('disabled', false);
-         $('.stepForward').prop('disabled', false);
-        d3.selectAll(".menu-options div").style({'background-color': '#e1e1e1','color': '#969696'});
-        d3.selectAll(".states").style("fill", function(d){
-                return choropleth(d, colorize);
-            })
-            .select("desc")
-                .text(function(d) {
-                    return choropleth(d, colorize);
-            });
-        createMenu(arrayConsent, colorArrayConsent, "Parental Consent: ", textArray[4], linkArray[4])
-        $(".Parental").css({'background-color': '#CCCCCC','color': '#333333'});
-        //removes and creates correct chart
-        var oldChart = d3.select(".chart").remove();
-        var oldRects = d3.selectAll(".chartRect").remove();
-        setChart(yearExpressed);
-});
-    
-    //click changes for mandatory ultrasound
-    $(".Ultrasound").click(function(){
-        expressed = Category[5];
-        $('.stepBackward').prop('disabled', false);
-         $('.play').prop('disabled', false);
-         $('.pause').prop('disabled', false);
-         $('.stepForward').prop('disabled', false);
-        d3.selectAll(".menu-options div").style({'background-color': '#e1e1e1','color': '#969696'});
-        d3.selectAll(".states").style("fill", function(d){
-                return choropleth(d, colorize);
-            })
-            .select("desc")
-                .text(function(d) {
-                    return choropleth(d, colorize);
-            });
-        createMenu(arrayUltrasound, colorArrayUltrasound, "Mandatory Ultrasound: ", textArray[5], linkArray[5]);
-        $(".Ultrasound").css({'background-color': '#CCCCCC','color': '#333333'});
-        //removes and creates correct chart
-        var oldChart = d3.select(".chart").remove();
-        var oldRects = d3.selectAll(".chartRect").remove();
-        setChart(yearExpressed);
-});
 }; //END drawMenu
 
-//creates dropdown menu
+//this creates the dropdowm men
 function drawMenuInfo(colorize, yearExpressed){
     //creates year for map menu
     yearExpressedText = d3.select(".menu-info")
@@ -369,7 +317,7 @@ function drawMenuInfo(colorize, yearExpressed){
 
 //vcr controls click events
 function animateMap(yearExpressed, colorize, yearExpressedText){
-    //step backward functionality
+    //step backward functionality -- do we want to use jQuery for this like they did?
     $(".stepBackward").click(function(){
         if (yearExpressed <= keyArray[keyArray.length-1] && yearExpressed > keyArray[0]){
             yearExpressed--;
@@ -379,18 +327,18 @@ function animateMap(yearExpressed, colorize, yearExpressedText){
             changeAttribute(yearExpressed, colorize);
         }; 
     });
-    //play functionality
+    //here is the play function for the timer -- we'll need something like this as well. how to implement for both prop symbols and choropleth at the same time?
     $(".play").click(function(){
         timer.play();
         $('.play').prop('disabled', true);
     });
-    //pause functionality
+    //same as above, but for pausing. we definitely want this.
     $(".pause").click(function(){
         timer.pause();
         $('.play').prop('disabled', false);
         changeAttribute(yearExpressed, colorize);
     });
-    //step forward functionality
+    //same as above, but forward.
     $(".stepForward").click(function(){
         if (yearExpressed < keyArray[keyArray.length-1]){
             yearExpressed++;
@@ -400,9 +348,9 @@ function animateMap(yearExpressed, colorize, yearExpressedText){
             changeAttribute(yearExpressed, colorize);
         }; 
     });
-}; //end AnimateMAP
+};
 
-//for play functionality
+//does this sequence the map over time?
 function timeMapSequence(yearsExpressed) {
     changeAttribute(yearExpressed, colorize);
     if (yearsExpressed < keyArray[keyArray.length-1]){
@@ -410,7 +358,7 @@ function timeMapSequence(yearsExpressed) {
     };
 }; //end timeMapSequence
 
-//changes year displayed on map
+//this changes year displayed on map, we definitely want to do this as well
 function changeAttribute(year, colorize){
     var removeOldYear = d3.selectAll(".yearExpressedText").remove();
     
@@ -428,7 +376,7 @@ function changeAttribute(year, colorize){
             .text(function(d) {
                 return choropleth(d, colorize);
         });
-     //alters timeline year text    
+     //alters timeline year text -- this is a nice visualization we might want to employ   
     var timelineYear = d3.select(".timeline")
         .selectAll('g')
         .attr("font-weight", function(d){
@@ -445,7 +393,7 @@ function changeAttribute(year, colorize){
             }
         }).attr("stroke", function(d){
             if (year == d.getFullYear()){
-                return "#986cb3";
+                return "#ffffff";
             } else {
                 return "gray";
             }
