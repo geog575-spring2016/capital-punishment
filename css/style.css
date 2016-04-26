@@ -1,271 +1,60 @@
-.overview {
-    padding: 20px;
-    padding-left: 60px;
-    padding-right: 60px;
-    color: #000; 
-    background-color:  #000;
-}
 
-.pagetitle {
-    margin-top: 0px;
-}
-
-.main-menu { 
-    position: absolute;
-    color: #000;
-}
-
-.menu-options {
-    float: left;
-    background-color:  #000;
-    cursor: pointer;
-    font-family: Candara;
-}
-
-.menu-inset {
-    float: right;
-    border-style: solid;
-    border-width: 2px;
-    border-color: #CCCCCC;
-}
-
-.Overview {
-    text-align: center;
-    padding: 13%;
-}
-
-.title {
-    font-family: 'Roboto Slab', sans-serif;
-}
-
-/*  Map Info CSS Goes Here*/
-.menuInfoBox {
-    margin-left: 29%;
-    font-size: 14px;
-    font-family: Open Sans, sans-serif;
-}
-
-.textBox {
-    width: 50%;
-    float: left;
-    padding-bottom: 2%;
-}
-
-.yearExpressedText {
-    float: right; 
-    padding-right: 115px;
-    font-family: 'Roboto Slab', sans-serif;
-}
-
-
-.sequence-buttons {
-
-}
-
-.button {
-    padding-right: 15%;
-    display: inline-flex;
-    float: right;
-}
-.dropdown {
-    margin-top: 6%;
-}
-
-/*  Map CSS */
-/*  ------ */
+/******MAP STYLING******/
 
 .map {
-    background-color: #fff;
-    margin-left: 26%;
+    position: absolute;
+    top: 30px;
+    left: 0px ;
+    border: none;
+    margin-left: 15%;
     padding-left: 3%;
 }
 
-.states {
-    fill: #808080;
+.USstates {
+    fill: white;
     stroke: #fff;
     stroke-width: 0.5px;
     float:left;
 }
 
-/* Labels CSS  */
-/* ---------  */
-
-.infoLabel {
-    position: absolute;
-    height: auto;
-    padding: 10px;
-    float:right;
-    display:inline-block;
-    margin-right:-200px;
-}
-
-.labelTitle {
-   position: absolute;
-   font-family: 'Candara', serif;
-   font-weight:bold;
-   font-size:20px;
-   line-height:24px;
-   background-color: #525252;
-   color:#fff;
-   z-index: 2;
-   width:200px;
-   padding:10px;
-   margin-top: -240px;
-   margin-left:660px;
-}
-
-.labelAttribute {
-    font-family: 'Candara', sans-serif;
-    font-size:16px;
-    font-weight:normal;
-    line-height: 20px;
-}
-
-/* Graph CSS  */
-/* ---------  */
-
-.graph {
-}
-
-/* .chart is the SVG of the chart itself */
-.chart {
-    background-color: #00C6FF;
-    background-color: #fff;
-    margin-left: 26%;
-}
-
-.axis {
-    background-color: #000;
-}
-
-.timeline {
-    position:absolute;
-    font-family: 'Open Sans', sans-serif;
-    font-size:12px;
-/*    font-weight: bold;*/
-    fill: none;
-    stroke: gray;
-    shape-rendering: crispEdges;
-}
-
-.timeline path,
-.timeline line {
-    fill: none;
-    stroke: black;
-    shape-rendering: crispEdges;
-}
-
-/* Jumps CSS  */
-/* ------------  */
-#map{
-}
-
-#overview{
-    padding-top:70px;
-}
-
-#prohibition{
-    padding-top: 36px;
-}
-
-#counseling{
-    padding-top: 36px;
-}
-
-#waiting{
-    padding-top: 36px;
-}
-
-#consent{
-    padding-top: 36px;
-}
-
-#ultrasound{
-    padding-top: 36px;
-}
-
-#CPC{
-    padding-top: 36px;
-}
-
-/* Analysis CSS  */
-/* ------------  */
-
-#analysis {
-    padding-top:0px;
-}
-
-.analysis{
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
-#AnalysisBox{
-    position: relative;
-    left: 20%;
-    width: 60%;
-}
-
-.letscenter{
-    text-align: center;
-    margin-top: 12px;
-    margin-bottom: 24px;
-    position: relative;
-    right: 50px;
-}
-
-.chptrhead{
-    position: relative;
-    left: -30px;
-}
-
-.chptrhead h2{
-    color: white;
-    background-color: #525252;
-    position: relative;
-    padding: 6px;
-    margin-bottom: 24px;
-}
-
-#cite p{
-    font-size: 10px;
-}
-
-/* About CSS  GOES HERE*/
-
-
-/* General CSS Goes Here  */
-/* ----------------  */
-
-::selection {
-    background-color: #f95618; 
-    color: #fff;
-}
-::-moz-selection {
-    background-color: #f95618; 
-    color: #fff;
-}
-
-p {
-    font-size: 16px;
-    font-family: 'Candara', sans-serif;
-}
+/******TITLE STYLING******/
 
 h1 {
-    font-size: 36px;
-    font-family: 'Candara', serif;
+    z-index: 10px;
+    top: 0px;
+    left: 40px;
+    font-size: 3.5em;
+    font-style: bold;
+    position: absolute;
+    border-width: 0px;
+    border: none;
+    text-align: center;
+    padding-top: 15px;
+    font-family: Arial;
 }
 
-h2 {
-    
-    font-family: 'Candara';
+
+/******INFOLABEL STYLING******/
+
+.retrievelabel {
+    position: absolute;
+    height: 50px;
+    min-width: 10px;
+    color: #000000;
+    background-color: white;
+    border: none;
+    padding: 5px 10px;
+    top: 50px;
+    font-family: Arial;
+    left: 100px;
+    top: 300px;
 }
 
-h3 {
-    font-family: 'Candara';
+.retrievelabel h1 {
+    margin: 0 10px 0 0;
+    padding: 0;
+    display: inline-block;
+    line-height: 1em;
 }
 
-body { 
-    padding-top: 50px; 
-}
 
