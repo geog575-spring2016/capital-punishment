@@ -30,7 +30,7 @@ var chartWidth = window.innerWidth * 0.35,
 
     //width is a function of window size
     var width = window.innerWidth * 0.6,
-        height = 800;
+        height = 400;
 
 //when window loads, initiate map
 window.onload = setMap();
@@ -44,7 +44,8 @@ function setMap() {
         .append("svg")
         .attr("class", "map")
         .attr("width", width)
-        .attr("height", height);
+        .attr("height", height)
+        .attr("y", "50");
 
     //set the projection for the US, equal area because choropeth
     var projection = d3.geo.albers()
