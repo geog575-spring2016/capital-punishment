@@ -63,7 +63,6 @@ function setMap() {
     d3_queue.queue()
         .defer(d3.csv, "data/Law.csv")
         .defer(d3.json, "data/continentalUS.topojson")
-        .defer(d3.json, "data/Executions/Total77to13.csv")
         .await(callback);
 
 //set up callback function with 3 
