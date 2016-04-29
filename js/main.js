@@ -40,7 +40,7 @@ function setMap() {
 
 
     // map variable, an svg element with attributes styled in style.css
-    var map = d3.select("body")
+    var map = d3.select("#mainmap")
         .append("svg")
         .attr("class", "map")
         .attr("width", width)
@@ -48,7 +48,7 @@ function setMap() {
 
 //set the projection for the US, equal area because choropeth
     var projection = d3.geo.albers()
-        .scale(1200)
+        .scale(1000)
         .center([0.00, 39.8333333])
         .rotate ([98.585522, 0, 0])
         //double check these parallels at a later  time

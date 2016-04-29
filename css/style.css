@@ -1,14 +1,32 @@
 
 /******MAP STYLING******/
 
+.banner {
+    position: absolute;
+}
+
+#title {
+    height: 200px;
+    width: 100%;
+    float: left;
+    display: inline-block;
+    margin: 5px auto;
+    padding: 10px;
+    background-color: #fff;
+}
+
 .map {
     position: absolute;
-    top: 30px;
+    top: 210px;
     left: 0px ;
     border: none;
+    width: 80%;
     margin-left: 15%;
     padding-left: 3%;
+    background-color: #000;
 }
+
+
 
 .USstates {
     fill: white;
@@ -19,19 +37,7 @@
 
 /******TITLE STYLING******/
 
-h1 {
-    z-index: 10px;
-    top: 0px;
-    left: 40px;
-    font-size: 3.5em;
-    font-style: bold;
-    position: absolute;
-    border-width: 0px;
-    border: none;
-    text-align: center;
-    padding-top: 15px;
-    font-family: Arial;
-}
+
 
 
 /******INFOLABEL STYLING******/
