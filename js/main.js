@@ -30,7 +30,7 @@ var chartWidth = window.innerWidth * 0.35,
 
     //width is a function of window size
     var width = window.innerWidth * 0.6,
-        height = 800;
+        height = 400;
 
 //when window loads, initiate map
 window.onload = setMap();
@@ -44,9 +44,10 @@ function setMap() {
         .append("svg")
         .attr("class", "map")
         .attr("width", width)
-        .attr("height", height);
+        .attr("height", height)
+        .attr("y", "50");
 
-//set the projection for the US, equal area because choropeth
+    //set the projection for the US, equal area because choropeth
     var projection = d3.geo.albers()
         .scale(1000)
         .center([0.00, 39.8333333])
@@ -55,11 +56,11 @@ function setMap() {
         .parallels([30, 48])
         .translate([width / 2, height / 2]);
 
-        //path to draw the map
+    //path to draw the map
     var path = d3.geo.path()
         .projection(projection);
 
-        //load in the data
+    //load in the data
     d3_queue.queue()
         .defer(d3.csv, "data/Law.csv")
         .defer(d3.json, "data/continentalUS.topojson")
@@ -70,6 +71,13 @@ function setMap() {
     //translate WI TopoJSON using the topojson.feature() method
     var states = topojson.feature(us, us.objects.continentalUS).features;
     states = joinData(states, csvData);
+
+    // array to store values of # of executions
+    var execute = [];
+    var timeline = yearArray.length;
+
+    // function to publish circles 
+    // circle(execute, timeline, states, csvData);
 
     //add color scale
     var colorScale = makeColorScale(csvData);
@@ -174,6 +182,14 @@ function choropleth(props, colorScale){
         return "#CCC";
   };
 };
+
+// //function to join our data since we brought csv/topo in separately
+// function circle(pops, length, states, csvData) {
+//     for (var mug=0; mug<length; mug++) {
+//         var pop = states.features[mug].properties.POPULATION;
+//         pops.push(Number(pop));
+//     }
+// }
 
 
 //function to highlight enumeration units and bars on mouseover
