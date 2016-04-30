@@ -336,6 +336,58 @@ function animateMap(yearExpressed, colorize, yearExpressedText){
     });
 };
 
+
+
+//changes year displayed on map
+function changeAttribute(year, colorize){
+    var removeOldYear = d3.selectAll(".yearExpressedText").remove();
+
+    for (x = 0; x < keyArray.length; x++){
+        if (year == keyArray[x]) {
+             yearExpressed = keyArray[x];
+        }
+    }
+    //colorizes state
+    d3.selectAll(".states")
+        .style("fill", function(year){
+            return choropleth(year, colorize);
+        })
+        .select("desc")
+            .text(function(d) {
+                return choropleth(d, colorize);
+        });
+     //alters timeline year text
+    var timelineYear = d3.select(".timeline")
+        .selectAll('g')
+        .attr("font-weight", function(d){
+            if (year == d.getFullYear()){
+                return "bold";
+            } else {
+                return "normal";
+            }
+        }).attr("font-size", function(d){
+            if (year == d.getFullYear()){
+                return "18px";
+            } else {
+                return "12px";
+            }
+        }).attr("stroke", function(d){
+            if (year == d.getFullYear()){
+                return "#986cb3";
+            } else {
+                return "gray";
+            }
+         });
+    drawMenuInfo(colorize, year);
+}; //END changeAttribute
+
+
+
+
+
+
+
+
 //function to highlight enumeration units and bars on mouseover
 function highlight(props){
     //change stroke on mouseover
