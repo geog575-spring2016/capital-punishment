@@ -231,6 +231,21 @@ function drawMenu(){
     });
 };
 
+
+//creates dropdown menu
+function drawMenuInfo(colorize, yearExpressed){
+    //creates year for map menu
+    yearExpressedText = d3.select(".menu-info")
+        .append("text")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("class", "yearExpressedText menu-info")
+        .text(yearExpressed)
+        .style({'font-size':'36px', 'font-weight': 'strong'});
+}; //End DrawMenuInfo
+
+
+
 //creates the menu items
 function createMenu(arrayX, arrayY, title, infotext, infolink){
     var yArray = [40, 85, 130, 175, 220, 265];
@@ -305,11 +320,11 @@ function createMenu(arrayX, arrayY, title, infotext, infolink){
 function animateMap(yearExpressed, colorize, yearExpressedText){
     //step backward functionality
     $(".stepBackward").click(function(){
-        if (yearExpressed <= keyArray[keyArray.length-1] && yearExpressed > keyArray[0]){
+        if (yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
             yearExpressed--;
             changeAttribute(yearExpressed, colorize);
         } else {
-            yearExpressed = keyArray[keyArray.length-1];
+            yearExpressed = yearArray[yearArray.length-1];
             changeAttribute(yearExpressed, colorize);
         };
     });
@@ -326,11 +341,11 @@ function animateMap(yearExpressed, colorize, yearExpressedText){
     });
     //step forward functionality
     $(".stepForward").click(function(){
-        if (yearExpressed < keyArray[keyArray.length-1]){
+        if (yearExpressed < yearArray[yearArray.length-1]){
             yearExpressed++;
             changeAttribute(yearExpressed, colorize);
         } else {
-            yearExpressed = keyArray[0];
+            yearExpressed = yearArray[0];
             changeAttribute(yearExpressed, colorize);
         };
     });
@@ -342,9 +357,9 @@ function animateMap(yearExpressed, colorize, yearExpressedText){
 function changeAttribute(year, colorize){
     var removeOldYear = d3.selectAll(".yearExpressedText").remove();
 
-    for (x = 0; x < keyArray.length; x++){
-        if (year == keyArray[x]) {
-             yearExpressed = keyArray[x];
+    for (x = 0; x < yearArray.length; x++){
+        if (year == yearArray[x]) {
+             yearExpressed = yearArray[x];
         }
     }
     //colorizes state
