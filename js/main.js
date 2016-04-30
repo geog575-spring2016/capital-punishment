@@ -41,6 +41,7 @@ var mapWidth = window.innerWidth * 0.6,
 mapHeight = 800;
 var menuWidth = 200, menuHeight = 300;
 var menuInfoWidth = 250, menuInfoHeight = 100;
+var joinedJson;
 
 //when window loads, initiate map
 window.onload = initialize();
@@ -79,11 +80,13 @@ function setMap() {
         .projection(projection);
         //load in the data
     d3_queue.queue()
+    .defer(d3.json, "../data/continentalUS.topojson")
         .defer(d3.csv, "../data/Law.csv")
-        .defer(d3.json, "../data/continentalUS.topojson")
+        .defer(d3.csv,"../data/allExecutions.csv")
+
         .await(callback);
         //retrieve and process json file and data
-        function callback(error, allExecutions, Law, continentalUS){
+        function callback(error, continentalUS, allExecutions, Law){
             //Variable to store the continentalUS json with all attribute data
             joinedJson = topojson.feature(continentalUS, continentalUS.objects.states).features;
             colorize = colorScale(joinedJson);
@@ -100,7 +103,9 @@ console.log(continentalUS);
             function joinData(topojson, csvData, attribute){
                  var jsonStates = continentalUS.objects.states.geometries;
                 //loop through the csv and tie it to the topojson
+console.log(csvData.length);
                  for(var i=0; i<csvData.length; i++){
+                   console.log(csvData.length);
                     var csvState = csvData[i];
                     var csvLink = csvState.NAME;
                     //loop through states and assign  data
@@ -108,13 +113,11 @@ console.log(continentalUS);
                         //check if NAME = NAME, which will join
                         if (jsonStates[a].properties.NAME == csvLink){
                             attrObj = {};
-                            console.log("hey"); //fails
                             //loop to assign key/value pairs to json object
                             for(var year in yearArray){
                                 var attr = yearArray[year];
                                 var val = (csvState[attr]);
                                 attrObj[attr] = val;
-                                console.log("hi"); //fails
                             };
                         jsonStates[a].properties[attribute] = attrObj;
                         };
