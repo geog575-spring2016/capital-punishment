@@ -47,6 +47,11 @@ function setMap() {
         .attr("height", height)
         .attr("y", "50");
 
+    // creating path to trace onto states to obtain centriods
+    map.append("path")
+      .datum(topojson.mesh(us))
+      .attr("d", path);
+
     //set the projection for the US, equal area because choropeth
     var projection = d3.geo.albers()
         .scale(1000)
@@ -65,6 +70,7 @@ function setMap() {
         .defer(d3.csv, "data/Law.csv")
         .defer(d3.json, "data/continentalUS.topojson")
         .await(callback);
+
 
 //set up callback function with 3 
   function callback(error, csvData, us){
@@ -93,7 +99,8 @@ function joinData(states, csvData) {
         //variable for the current county in topo
         var csvState = csvData[i]; 
         //variable for the csv primary key
-        var csvKey = csvState.NAME; 
+        var csvKey = csvState.NAME;
+
         //loop through geojson regions to find correct region
         for (var a=0; a<states.length; a++){
             //the current county geojson properties
@@ -201,6 +208,7 @@ function highlight(props){
             "stroke-width": "4"
         });
     setLabel(props);
+
 };
 function dehighlight(props) {
     var selected = d3.selectAll("." + props.NAME)
@@ -262,5 +270,18 @@ function moveLabel(){
             "top": y + "px"
         });
 };
+
+// test function to get centroids of states
+function getBoundingBoxCenter(selection) {
+    // get the DOM element from a D3 selection
+    // you could also use "this" inside .each()
+    var element = selection.node(),
+        // use the native SVG interface to get the bounding box
+        bbox = element.getBBox();
+    // return the center of the bounding box
+    return [bbox.x + bbox.width/2, bbox.y + bbox.height/2];
+}
+
+
 
 })(); //last line of main.js
