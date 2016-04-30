@@ -19,7 +19,7 @@ var arrayLaw = [ "Legal",
                   "Formal Hold",
                   "De Facto Moratorium"];
 //array for years
-var yearArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016"];
+var yearArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"];
 //deleted other arrays for because we are focusing on law/total # of executions
 //if time, go back to earlier commits and grab old arrays for race, method, etc.
 //choropleth global variables
@@ -31,11 +31,11 @@ var colorize;
 var yearExpressedText;
 var linkArray = ["<a href = '#law'> We used the Death Penalty Information Center to find this information.</a>"];
 //Color array for law data -- just threw in some random colors for now
-var colorArrayLaw      = [  "#000",
-                            "#CCC",
-                            "#FFF",
-                            "#TTT",
-                            "#NNN"   ];
+var colorArrayLaw      = [  "red",
+                            "blue",
+                            "green",
+                            "purple",
+                            "orange"   ];
 //the map width is a function of window size
 var mapWidth = window.innerWidth * 0.6,
 mapHeight = 800;
@@ -99,11 +99,11 @@ function setMap() {
             for (csv in csvArray){
                 joinData(continentalUS, csvArray[csv], attributeNames[csv]);
             };
-console.log(continentalUS);
+//console.log(continentalUS);
             function joinData(topojson, csvData, attribute){
                  var jsonStates = continentalUS.objects.states.geometries;
                 //loop through the csv and tie it to the topojson
-console.log(csvData.length);
+//console.log(csvData.length);
                  for(var i=0; i<csvData.length; i++){
                    console.log(csvData.length);
                     var csvState = csvData[i];
@@ -120,6 +120,7 @@ console.log(csvData.length);
                                 attrObj[attr] = val;
                             };
                         jsonStates[a].properties[attribute] = attrObj;
+                        break;
                         };
                     };
                  };
@@ -161,9 +162,12 @@ console.log(csvData.length);
                     .domain(currentArray); //sets the range of colors and domain of values based on the currently selected
         return scale(data[yearExpressed]);
     };
+
+
+
 //function to set the enumeration units in the map
 function setEnumerationUnits(states, map, path, colorScale) {
-  console.log("enum");
+  //console.log("enum");
     //variable USstates, styled in style.css
     var USstates = map.selectAll(".USstates")
         .data(states)
@@ -192,17 +196,26 @@ function setEnumerationUnits(states, map, path, colorScale) {
     var desc = USstates.append("desc")
         .text('{"stroke": "#faf0e6", "stroke-width": "0.5"}');
 };
-//function to test for data value and return color
-function choropleth(props, colorScale){
-    //make sure attribute value is a number
-    var val = props[expressed];
-    //if attribute value exists, assign a color; otherwise assign gray
-    if (val && val != NaN){
-        return colorScale(val);
-    } else {
-        return "#CCC";
-  };
+
+
+function choropleth(d, colorize){
+var data = d.properties ? d.properties[expressed] : d;
+console.log(d.properties);
+//console.log(d.properties[expressed]);
+return colorScale(data);
 };
+
+// //function to test for data value and return color
+// function choropleth(props, colorScale){
+//     //make sure attribute value is a number
+//     var val = props[expressed];
+//     //if attribute value exists, assign a color; otherwise assign gray
+//     if (val && val != NaN){
+//         return colorScale(val);
+//     } else {
+//         return "#CCC";
+//   };
+// };
 //menu items function
 function drawMenu(){
     //click changes on Overview
