@@ -29,6 +29,7 @@ var infoArray = ["The Legality of Capital Punishment has varied over the past fi
 var expressed;
 var colorize;
 var yearExpressedText;
+var linkArray = ["<a href = '#law'> We used the Death Penalty Information Center to find this information.</a>"];
 //Color array for law data -- just threw in some random colors for now
 var colorArrayLaw      = [  "#000",
                             "#CCC",
@@ -38,6 +39,8 @@ var colorArrayLaw      = [  "#000",
 //the map width is a function of window size
 var mapWidth = window.innerWidth * 0.6,
 mapHeight = 800;
+var menuWidth = 200, menuHeight = 300;
+var menuInfoWidth = 250, menuInfoHeight = 100;
 
 //when window loads, initiate map
 window.onload = initialize();
@@ -48,8 +51,7 @@ function initialize(){
   yearExpressed = yearArray[yearArray.length-1];
     animateMap(yearExpressed, colorize, yearExpressedText);
     setMap();
-    createMenu(arrayLaw, colorArrayLaw, "Law: ", textArray[0], linkArray[0]);
-    createInset();
+    createMenu(arrayLaw, colorArrayLaw, "Law: ", infoArray[0], linkArray[0]);
     $(".Law").css({'background-color': '#CCCCCC','color': '#333333'});
     //disables buttons on load
     $('.stepBackward').prop('disabled', true);
