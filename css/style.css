@@ -4,22 +4,22 @@
 
 .map {
     background-color: #fff;
-    margin-left: 26%;
+    margin-left: 10%;
     padding-left: 3%;
     background: none;
 }
 
 .states {
-    fill: #808080;
-    stroke: #fff;
+    fill: white;
+    stroke: grey;
     stroke-width: 0.5px;
     float:left;
 }
 
 .jumbotron {
     padding: 20px;
-    padding-left: 60px;
-    padding-right: 60px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 .infoLabel {
@@ -87,4 +87,25 @@
     font-family: Arial;
     left: 100px;
     top: 200px;
+}
+.labelTitle {
+   position: absolute;
+   font-family: 'Roboto Slab', serif;
+   font-weight:bold;
+   font-size:20px;
+   line-height:24px;
+   background-color: #525252;
+   color:#fff;
+   z-index: 2;
+   width:200px;
+   padding:10px;
+   margin-top: -240px;
+   margin-left:660px;
+}
+
+.labelAttribute {
+    font-family: 'Open Sans', sans-serif;
+    font-size:16px;
+    font-weight:normal;
+    line-height: 20px;
 }

@@ -7,16 +7,16 @@
 //wrap it all in an anonymous function
 (function(){
 
-
 //****HERE ARE SOME GLOBAL VARIABLES****//
 var topicArray = ["allExecutions",
                   "Law"]; //category
 //array for law variable
 var arrayLaw = [ "Legal",
-                  "Not",
+                  "Illegal",
                   "Moratorium",
                   "Formal Hold",
-                  "De Facto Moratorium"];
+                  "De Facto Moratorium",
+                  "De Facto Momento"];
 //array for years
 var yearArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"];
 //deleted other arrays for because we are focusing on law/total # of executions
@@ -409,16 +409,11 @@ function changeAttribute(year, colorize){
 }; //END changeAttribute
 
 
-
-
-
-
-
 function highlight(data) {
     //holds the currently highlighted feature
     var feature = data.properties ? data.properties : data.feature.properties;
     d3.selectAll("."+feature.NAME)
-        .style("fill", "white");
+        .style("fill", "red");
 
     //set the state name as the label title
     var labelName = feature.NAME;
@@ -427,15 +422,14 @@ function highlight(data) {
     //set up the text for the dynamic labels for the map
     //labels should match the yearExpressed and the state of the law during that year
     if (expressed == "Law") {
-        labelAttribute = "Report Card: "+feature[expressed][Number(yearExpressed)];
+        labelAttribute = "Number of Executions:"+feature[expressed][Number(yearExpressed)];
     } else if (expressed == "allExecutions") {
-        labelAttribute = yearExpressed+"<br>law law "+feature[expressed][Number(yearExpressed)];
+        labelAttribute = yearExpressed+"<br> Legal Status: "+feature[expressed][Number(yearExpressed)];
     }
     var retrievelabel = d3.select(".map")
         .append("div")
         .attr("class", "retrievelabel")
-        .attr("id",feature.postal+"label")
-        .attr("padding-left", 500+"px");
+        .attr("id",feature.NAME+"label")
 
     var labelTitle = d3.select(".retrievelabel")
         .html(labelName)
@@ -459,9 +453,6 @@ function dehighlight(data) {
     selection.style("fill", fillColor);
 
 };
-
-
-
 
 function setLabel(props) {
     //label content
