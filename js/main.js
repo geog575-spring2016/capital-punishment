@@ -5,11 +5,9 @@
 //4) We aren't moving the retrievelabel around so moveLabel is extraneous, but removing it makes the
 //dehighlight function break
 //wrap it all in an anonymous function
-(function(){
-
 //****HERE ARE SOME GLOBAL VARIABLES****//
-var topicArray = ["allExecutions",
-                  "Law"]; //category
+var topicArray = ["Law",
+                  "allExecutions"]; //the first item in this array will be the default
 //array for law variable
 var arrayLaw = [ "Legal",
                   "Illegal",
@@ -30,14 +28,14 @@ var colorize;
 var yearExpressedText;
 var linkArray = ["<a href = '#law'> We used the Death Penalty Information Center to find this information.</a>"];
 //Color array for law data -- just threw in some random colors for now
-var colorArrayLaw      = [  "red",
-                            "blue",
-                            "green",
+var colorArrayLaw      = [  "#fff",
+                            "#000",
+                            "red",
                             "purple",
                             "orange"   ];
 //the map width is a function of window size
-var mapWidth = window.innerWidth * 0.6,
-mapHeight = 800;
+var mapWidth = window.innerWidth * 0.7,
+mapHeight = 600;
 var menuWidth = 200, menuHeight = 300;
 var menuInfoWidth = 250, menuInfoHeight = 100;
 var joinedJson;
@@ -72,28 +70,29 @@ function setMap() {
         .attr("height", mapHeight);
 //set the projection for the US, equal area because choropeth
     var projection = d3.geo.albers()
-        .scale(1000)
+        .scale(1300)
         .translate([mapWidth / 2, mapHeight / 2]);
         //path to draw the map
     var path = d3.geo.path()
         .projection(projection);
         //load in the data
     d3_queue.queue()
-    .defer(d3.json, "../data/continentalUS.topojson")
+        .defer(d3.json, "../data/continentalUS.topojson")
         .defer(d3.csv, "../data/Law.csv")
         .defer(d3.csv,"../data/allExecutions.csv")
 
+
         .await(callback);
         //retrieve and process json file and data
-        function callback(error, continentalUS, allExecutions, Law){
+        function callback(error, continentalUS, Law, allExecutions){
             //Variable to store the continentalUS json with all attribute data
             joinedJson = topojson.feature(continentalUS, continentalUS.objects.states).features;
             colorize = colorScale(joinedJson);
 
             //Create an Array with CSV's loaded
-            var csvArray = [allExecutions, Law];
+            var csvArray = [Law, allExecutions];
             //Names for the overall Label we'd like to assign them
-            var attributeNames = ["allExecutions", "Law"];
+            var attributeNames = ["Law", "allExecutions"];
             //For each CSV in the array, run the joinData function
             for (csv in csvArray){
                 joinData(continentalUS, csvArray[csv], attributeNames[csv]);
@@ -152,56 +151,56 @@ function setMap() {
     // this if/else statement determines which variable is currently being expressed and assigns the appropriate color scheme to currentColors
         if (expressed === "Law") {
             currentColors = colorArrayLaw;
-            currentArray = arrayLaw
+            currentArray = arrayLaw;
         } else if (expressed === "allExecutions") {
           //call function to activate proportional symbols
         };
         scale = d3.scale.ordinal()
                     .range(currentColors)
                     .domain(currentArray); //sets the range of colors and domain of values based on the currently selected
-        return scale(data[yearExpressed]);
+
+
     };
 
-
-
-//function to set the enumeration units in the map
-function setEnumerationUnits(states, map, path, colorScale) {
-  //console.log("enum");
-    //variable USstates, styled in style.css
-    var USstates = map.selectAll(".USstates")
-        .data(states)
-        .enter()
-        .append("path")
-        .attr("class", function(d) {
-            return "USstates " + d.properties.NAME;
-        })
-        .attr("d", path)
-        //fill the USstates with the choropleth colorScale
-        .style("fill", function(d){
-            return choropleth(d.properties, colorScale);
-        })
-        //when the mouse goes over an enumeration unit, call highlight function
-        .on("mouseover", function(d){
-            highlight(d.properties);
-        })
-        //when the mouse leaves an emumeration unit, call the dehighlight function
-        .on("mouseout", function(d){
-            dehighlight(d.properties);
-        })
-        //when the mouse moves over enumeration units, call moveLabel function
-        .on("mousemove", moveLabel);
-
-//set up a variable for the dehighlight function -- what the style will return to on mouseout
-    var desc = USstates.append("desc")
-        .text('{"stroke": "#faf0e6", "stroke-width": "0.5"}');
-};
+//
+// //function to set the enumeration units in the map
+// function setEnumerationUnits(states, map, path, colorScale) {
+//   //console.log("enum");
+//     //variable USstates, styled in style.css
+//     var USstates = map.selectAll(".USstates")
+//         .data(states)
+//         .enter()
+//         .append("path")
+//         .attr("class", function(d) {
+//             return "USstates " + d.properties.NAME;
+//         })
+//         .attr("d", path)
+//         //fill the USstates with the choropleth colorScale
+//         .style("fill", function(d){
+//             return choropleth(d.properties, colorScale);
+//         })
+//         //when the mouse goes over an enumeration unit, call highlight function
+//         .on("mouseover", function(d){
+//             highlight(d.properties);
+//         })
+//         //when the mouse leaves an emumeration unit, call the dehighlight function
+//         .on("mouseout", function(d){
+//             dehighlight(d.properties);
+//         })
+//         //when the mouse moves over enumeration units, call moveLabel function
+//         .on("mousemove", moveLabel);
+//
+// //set up a variable for the dehighlight function -- what the style will return to on mouseout
+//     var desc = USstates.append("desc")
+//         .text('{"stroke": "#faf0e6", "stroke-width": "0.5"}');
+// };
 
 
 function choropleth(d, colorize){
 var data = d.properties ? d.properties[expressed] : d;
-console.log(d.properties);
 //console.log(d.properties[expressed]);
 return colorScale(data);
+return scale(data[yearExpressed]);
 };
 
 // //function to test for data value and return color
@@ -413,7 +412,7 @@ function highlight(data) {
     //holds the currently highlighted feature
     var feature = data.properties ? data.properties : data.feature.properties;
     d3.selectAll("."+feature.NAME)
-        .style("fill", "red");
+        .style("fill", "#923402");
 
     //set the state name as the label title
     var labelName = feature.NAME;
@@ -422,9 +421,9 @@ function highlight(data) {
     //set up the text for the dynamic labels for the map
     //labels should match the yearExpressed and the state of the law during that year
     if (expressed == "Law") {
-        labelAttribute = "Number of Executions:"+feature[expressed][Number(yearExpressed)];
+        labelAttribute = "Legal Status:"+feature[expressed][(yearExpressed)];
     } else if (expressed == "allExecutions") {
-        labelAttribute = yearExpressed+"<br> Legal Status: "+feature[expressed][Number(yearExpressed)];
+        labelAttribute = yearExpressed+"<br> Number of executions: "+feature[expressed][(yearExpressed)];
     }
     var retrievelabel = d3.select(".map")
         .append("div")
@@ -481,5 +480,3 @@ function moveLabel(){
 
     d3.select(".retrievelabel")
 };
-
-})(); //last line of main.js

@@ -1,12 +1,12 @@
 
 /******MAP STYLING******/
 
-
 .map {
     background-color: #fff;
     margin-left: 10%;
     padding-left: 3%;
     background: none;
+    float: left;
 }
 
 .states {
@@ -17,21 +17,7 @@
 }
 
 .jumbotron {
-    padding: 20px;
-    padding-left: 15px;
-    padding-right: 15px;
 }
-
-.infoLabel {
-    position: absolute;
-    height: auto;
-    /*border: solid thin #fff;*/
-    padding: 10px;
-    float:right;
-    display:inline-block;
-    margin-right:-200px;
-}
-
 
 .page-header {
     margin-top: 0px;
@@ -43,7 +29,7 @@
 }
 
 #title {
-    height: 200px;
+    height: 150px;
     width: 100%;
     float: left;
     display: inline-block;
@@ -74,38 +60,21 @@
     line-height: 1em;
 }
 
-
-.retrievelabel {
-    position: absolute;
-    height: 100px;
-    min-width: 10px;
-    color: #000000;
-    background-color: white;
-    border: none;
-    padding: 5px 10px;
-    top: 50px;
-    font-family: Arial;
-    left: 100px;
-    top: 200px;
-}
 .labelTitle {
    position: absolute;
-   font-family: 'Roboto Slab', serif;
+   font-family: Candara;
    font-weight:bold;
    font-size:20px;
    line-height:24px;
-   background-color: #525252;
-   color:#fff;
+   background-color: white;
+   color:black;
    z-index: 2;
-   width:200px;
-   padding:10px;
-   margin-top: -240px;
-   margin-left:660px;
+   width:300px;
+   float: left;
 }
 
 .labelAttribute {
-    font-family: 'Open Sans', sans-serif;
+    font-family: Candara;
     font-size:16px;
-    font-weight:normal;
     line-height: 20px;
 }
