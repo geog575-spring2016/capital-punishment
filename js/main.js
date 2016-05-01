@@ -33,7 +33,7 @@ var chartWidth = window.innerWidth * 0.35,
         height = 400;
 
 //when window loads, initiate map
-window.onload = setMap();
+window.onload = setMap2();
 
 //set up the choropleth
 function setMap() {
@@ -47,10 +47,10 @@ function setMap() {
         .attr("height", height)
         .attr("y", "50");
 
-    // creating path to trace onto states to obtain centriods
-    map.append("path")
-      .datum(topojson.mesh(us))
-      .attr("d", path);
+    // TEST: creating path to trace onto states to obtain centriods
+    // map.append("path")
+    // .datum({type: "GeometryCollection", geometries: geometries})
+    // .attr("d", d3.geo.path());
 
     //set the projection for the US, equal area because choropeth
     var projection = d3.geo.albers()
@@ -78,6 +78,10 @@ function setMap() {
     var states = topojson.feature(us, us.objects.continentalUS).features;
     states = joinData(states, csvData);
 
+    // TEST
+    map.append("path")
+    .attr("d", d3.geo.path().projection(d3.geo.albers()));
+
     // array to store values of # of executions
     var execute = [];
     var timeline = yearArray.length;
@@ -91,6 +95,42 @@ function setMap() {
     setEnumerationUnits(states, map, path, colorScale);
     };
 };//end of setMap
+
+function setMap2() {
+
+
+    // create element to write map into #mainmap container
+    var svg = d3.select("#mainmap")
+        .append("svg")
+        .attr("class", "map")
+        .attr("width", width)
+        .attr("height", height);
+
+    console.log("TEST");
+
+
+    d3.json("data/continentalUS.topojson", function(error, us) {
+        if (error) return console.error(error);
+
+        console.log("TEST");
+
+        //set the projection for the US, equal area because choropeth
+        var mapSpecs = d3.geo.albers()
+            .scale(1000)
+            .center([0.00, 39.8333333])
+            .rotate ([98.585522, 0, 0])
+            //double check these parallels at a later  time
+            .parallels([30, 48])
+            .translate([width / 2, height / 2]);
+
+        svg.append("path")
+          .datum(topojson.feature(us, us.objects.continentalUS).features)
+          .attr("d", d3.geo.path().projection(mapSpecs));
+
+        console.log(us.objects.continentalUS);
+    });
+
+}
 
 //function to join our data since we brought csv/topo in separately
 function joinData(states, csvData) {
@@ -207,6 +247,13 @@ function highlight(props){
             "stroke": "white",
             "stroke-width": "4"
         });
+
+
+    // TEST: method for centroid data
+    var centroid = path.centroid(selected);
+    alert('Centroid at: ' + centroid[0] + ', ' + centroid[1]);
+
+
     setLabel(props);
 
 };
@@ -271,7 +318,7 @@ function moveLabel(){
         });
 };
 
-// test function to get centroids of states
+// TEST function to get centroids of states
 function getBoundingBoxCenter(selection) {
     // get the DOM element from a D3 selection
     // you could also use "this" inside .each()
@@ -281,6 +328,17 @@ function getBoundingBoxCenter(selection) {
     // return the center of the bounding box
     return [bbox.x + bbox.width/2, bbox.y + bbox.height/2];
 }
+
+// TEST: another callback function for circles
+function callback2(error, csvData, us){
+
+    // appending paths to map to find centroid
+    svg.append("path")
+    .datum(topojson.feature(uk, uk.objects.subunits))
+    .attr("d", d3.geo.path().projection(d3.geo.mercator()));
+}
+
+    // array to store values of # of execu
 
 
 
