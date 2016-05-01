@@ -44,6 +44,11 @@
     float:left;
 }
 
+.yearExpressedText {
+    float: left;
+    font-family: Candara;
+    color: white;
+}
 
 
 /******TITLE STYLING******/
@@ -69,8 +74,9 @@
    background-color: white;
    color:black;
    z-index: 2;
-   width:300px;
+   width:160px;
    float: left;
+   padding: 3px;
 }
 
 .labelAttribute {

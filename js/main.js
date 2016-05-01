@@ -1,10 +1,10 @@
 //bugs/issues to deal with:
-//1) x1 is not defined -- related to the retrievelabel. need to rectify this issue.
+//1) determine how to label states separately (because now we're using the unique field = no spaces)
 //2) figure out how to cycle over time automatically
-//3) figure out how to create proportional symbols (raw data for # executions per state in each year)
-//4) We aren't moving the retrievelabel around so moveLabel is extraneous, but removing it makes the
-//dehighlight function break
-//wrap it all in an anonymous function
+//3) figure out how to create proportional symbols (raw data for # executions per state in each year) = KAI
+//4) choropleth for laws... still gotta figure that out = NATALEE & GABY
+
+
 //****HERE ARE SOME GLOBAL VARIABLES****//
 var topicArray = ["Law",
                   "allExecutions"]; //the first item in this array will be the default
@@ -366,6 +366,7 @@ function animateMap(yearExpressed, colorize, yearExpressedText){
 
 //changes year displayed on map
 function changeAttribute(year, colorize){
+  console.log("changeatt");
     var removeOldYear = d3.selectAll(".yearExpressedText").remove();
 
     for (x = 0; x < yearArray.length; x++){
@@ -409,7 +410,7 @@ function changeAttribute(year, colorize){
 
 
 function highlight(data) {
-    //holds the currently highlighted feature
+    //this is a conditional statement, holds the currently highlighted feature
     var feature = data.properties ? data.properties : data.feature.properties;
     d3.selectAll("."+feature.NAME)
         .style("fill", "#923402");
@@ -421,9 +422,9 @@ function highlight(data) {
     //set up the text for the dynamic labels for the map
     //labels should match the yearExpressed and the state of the law during that year
     if (expressed == "Law") {
-        labelAttribute = "Legal Status:"+feature[expressed][(yearExpressed)];
+        labelAttribute = "Legal Status: "+feature[expressed][(yearExpressed)];
     } else if (expressed == "allExecutions") {
-        labelAttribute = yearExpressed+"<br> Number of executions: "+feature[expressed][(yearExpressed)];
+        labelAttribute = yearExpressed+"Number of executions: "+feature[expressed][(yearExpressed)];
     }
     var retrievelabel = d3.select(".map")
         .append("div")
