@@ -29,11 +29,12 @@ var yearExpressed;
 var yearExpressedText;
 var linkArray = ["<a href = '#law'> We used the Death Penalty Information Center to find this information.</a>"];
 //Color array for law data -- just threw in some random colors for now
-var colorArrayLaw      = [  "#fff",
-                            "#000",
-                            "red",
-                            "purple",
-                            "orange"   ];
+var colorArrayLaw      = [  "red",
+                            "orange",
+                            "yellow",
+                            "green",
+                            "blue",
+                          "pink" ];
 //the map width is a function of window size
 var mapWidth = window.innerWidth * 0.7,
 mapHeight = 600;
@@ -56,8 +57,6 @@ $(function(){
         }
     })
 });//end navbar function
-
-
 //start function for website
 function initialize(){
   expressed = topicArray[0];
@@ -67,15 +66,7 @@ function initialize(){
     //call setmap to set up the map
     setMap();
     //function to create the menu, including a blurb about the section and link to source
-    createMenu(arrayLaw, colorArrayLaw, "Legal Status: ", infoArray[0], linkArray[0]);
-    //css styling for the law choropleth
-    $(".Law").css({'background-color': 'orange','color': 'yellow'});
-    //disables buttons on load (kai is also working on the buttons/timeline, this may need to be changed)
-    $('.stepBackward').prop('disabled', true);
-    $('.play').prop('disabled', true);
-    $('.pause').prop('disabled', true);
-    $('.stepForward').prop('disabled', true);
-}; //End initialize
+}; // initialize OUT *mic drop*
 
 
 //set up the choropleth
@@ -104,8 +95,9 @@ function setMap() {
         drawMenu();
         //retrieve and process json file and data, same order as the queue function to load data
         function callback(error, continentalUS, Law, allExecutions){
-            //Variable to store the continentalUS json with all attribute data
+            //variable to store the continentalUS json with all attribute data
             joinedJson = topojson.feature(continentalUS, continentalUS.objects.states).features;
+            //colorize is colorscale function called for the joined data
             colorize = colorScale(joinedJson);
             //array for the csvs
             var csvArray = [Law, allExecutions];
@@ -119,32 +111,43 @@ function setMap() {
               joinData(continentalUS, csvArray[csv], attributeNames[csv]);
             };
             function joinData(topojson, csvData, attribute){
-
+              //a variable that stores all the states
                  var jsonStates = continentalUS.objects.states.geometries;
-                //loop through the csv and tie it to the topojson
-console.log(jsonStates);
-
                  for(var i=0; i<csvData.length; i++){
                     var csvState = csvData[i];
+                    //the way we're linking the csv data is using abrev
                     var csvLink = csvState.abrev;
+                    //console.log(jsonStates[a]); //fails
                     //for each state in jsonStates, loop through and link it to the csv data
                     for(var a=0; a<jsonStates.length; a++){
-                        //check if NAME = NAME, which will join
+                        //check if abrev = abrev, it will join
+                      //  console.log(jsonStates);
+                        console.log(jsonStates[a]);
+                        //right now, the line below is failing
+
                         if (jsonStates[a].properties.abrev == csvLink){
+                          //if this evaluates to true, join is working:
+                          //console.log(jsonStates[a].properties.abrev == csvLink);
+                            //attrObj holds all the attributes. so... many... informations
                             attrObj = {};
                             //loop to assign key/value pairs to json object
                             for(var year in yearArray){
+                              //console.log(yearArray);
+                            //attr variable holds all years as separate objects
                                 var attr = yearArray[year];
+                                //val variable holds all the values for law and allExecutions
                                 var val = (csvState[attr]);
+                                //setting this equal to val
                                 attrObj[attr] = val;
+
                             };
                         jsonStates[a].properties[attribute] = attrObj;
-                        break;
+                         break;
                         };
                     };
                  };
             };
-            //Style the states to be styled according to the data
+            //style states according to the data
             var states = map.selectAll(".states")
                 .data(joinedJson)
                 .enter()
@@ -170,11 +173,9 @@ console.log(jsonStates);
         }; //callback end
     }; //setmap end
 
-
-
     //for our menu, which will include law, overlay of total executions
     function drawMenu(){
-        //click changes on Overview
+        //click changes on law
         $(".Law").click(function(){
             expressed = Category[0];
             yearExpressed = yearArray[yearArray.length-1];
@@ -184,7 +185,7 @@ console.log(jsonStates);
             $('.play').prop('disabled', true);
             $('.pause').prop('disabled', true);
             $('.stepForward').prop('disabled', true);
-            d3.selectAll(".menu-options div").style({'background-color': '#e1e1e1','color': '#969696'});
+            d3.selectAll(".menu-options div").style({'background-color': 'orange','color': 'green'});
             d3.selectAll(".states").style("fill", function(d){
                     return choropleth(d, colorize);
                 })
@@ -193,7 +194,7 @@ console.log(jsonStates);
                         return choropleth(d, colorize);
                 });
             createMenu(arrayLaw, colorArrayLaw, "Law ", textArray[0], linkArray[0]);
-            $(".Overview").css({'background-color': '#CCCCCC','color': '#333333'});
+            $(".Law").css({'background-color': '#CCCCCC','color': '#333333'});
             //removes chart
             var oldChart = d3.selectAll(".chart").remove();
             var oldRects = d3.selectAll(".chartRect").remove();
@@ -201,12 +202,18 @@ console.log(jsonStates);
     };
 
     function colorScale(data){
+      //console.log("made it to colorscale");
     // this if/else statement determines which variable is currently being expressed and assigns the appropriate color scheme to currentColors
         if (expressed === "Law") {
+          //console.log("expressed = law");
             currentColors = colorArrayLaw;
             currentArray = arrayLaw;
+            //console.log(currentArray);
+            //console.log(arrayLaw);
+           //console.log(colorArrayLaw);
         } else if (expressed === "allExecutions") {
-          //call function to activate proportional symbols
+          console.log("expressed = all exec");
+        //here is where we call the function for the prop symbols??
         };
         //ordinal scale = discrete, like names or categories (use for law variable)
         scale = d3.scale.ordinal()
@@ -223,7 +230,7 @@ console.log(jsonStates);
 //         .enter()
 //         .append("path")
 //         .attr("class", function(d) {
-//             return "USstates " + d.properties.NAME;
+//             return "USstates " + d.properties.abrev;
 //         })
 //         .attr("d", path)
 //         //fill the USstates with the choropleth colorScale
@@ -248,8 +255,18 @@ console.log(jsonStates);
 
 
 function choropleth(d, colorize){
+//  console.log("in choropleth function");
+//conditional statement, setting data equal to
 var data = d.properties ? d.properties[expressed] : d;
+//console.log(data = d);
+//console.log(data = d.properties[expressed]);
+//console.log(d.properties = d.properties[expressed])
 //console.log(d.properties[expressed]);
+//console.log(d);
+//console.log(data);
+//console.log(d.properties[expressed]);
+//console.log(colorScale(data));
+//console.log(data[yearExpressed]);
 return colorScale(data);
 return scale(data[yearExpressed]);
 };
@@ -278,7 +295,7 @@ function drawMenuInfo(colorize, yearExpressed){
         .attr("class", "yearExpressedText menu-info")
         .text(yearExpressed)
         .style({'font-size':'36px', 'font-weight': 'strong'});
-}; //End DrawMenuInfo
+}; //done with drawMenuInfo
 
 
 
@@ -288,7 +305,7 @@ function createMenu(arrayX, arrayY, title, infotext, infolink){
     var oldItems = d3.selectAll(".menuBox").remove();
     var oldItems2 = d3.selectAll(".menuInfoBox").remove();
 
-    //creates menuBoxes
+    //creates menu boxes
     menuBox = d3.select(".menu-inset")
             .append("svg")
             .attr("width", menuWidth)
@@ -391,17 +408,20 @@ function animateMap(yearExpressed, colorize, yearExpressedText){
 
 //changes year displayed on map
 function changeAttribute(year, colorize){
-  console.log("changeatt");
     var removeOldYear = d3.selectAll(".yearExpressedText").remove();
-
-    for (x = 0; x < yearArray.length; x++){
-        if (year == yearArray[x]) {
-             yearExpressed = yearArray[x];
+    for (y = 0; y < yearArray.length; y++){
+        if (year == yearArray[y]) {
+          //y represents the year
+             yearExpressed = yearArray[y];
+            // console.log(yearExpressed = yearArray[y]);
         }
     }
-    //colorizes state
+    //colorizes the states
+
     d3.selectAll(".states")
         .style("fill", function(year){
+        //  console.log("makes it to styling states");
+        //  console.log(choropleth);
             return choropleth(year, colorize);
         })
         .select("desc")
@@ -425,20 +445,21 @@ function changeAttribute(year, colorize){
             }
         }).attr("stroke", function(d){
             if (year == d.getFullYear()){
-                return "#986cb3";
+                return "orange";
             } else {
-                return "gray";
+                return "blue";
             }
          });
     drawMenuInfo(colorize, year);
-}; //END changeAttribute
+  //  console.log(timelineYear);
+}; //end of changeAttribute
 
 
 function highlight(data) {
     //this is a conditional statement, holds the currently highlighted feature
     var feature = data.properties ? data.properties : data.feature.properties;
     d3.selectAll("."+feature.abrev)
-        .style("fill", "#923402");
+        .style("fill", "#800000");
 
     //set the state name as the label title
     var labelName = feature.abrev;
