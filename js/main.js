@@ -5,7 +5,7 @@
 //4) choropleth for laws... still gotta figure that out = NATALEE & GABY
 
 
-//****HERE ARE SOME GLOBAL VARIABLES****//
+//****GLOBAL VARIABLES****//
 var topicArray = ["Law",
                   "allExecutions"]; //the first item in this array will be the default
 //array for law variable
@@ -17,14 +17,15 @@ var arrayLaw = [ "Legal",
                   "De Facto Momento"];
 //array for years
 var yearArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"];
-//deleted other arrays for because we are focusing on law/total # of executions
-//if time, go back to earlier commits and grab old arrays for race, method, etc.
+
 //choropleth global variables
 var currentColors = [];
 var currentArray = [];
 var infoArray = ["The Legality of Capital Punishment has varied over the past five decades", "Something about the number of executions over the years blah blah"]
 var expressed;
+var scale;
 var colorize;
+var yearExpressed;
 var yearExpressedText;
 var linkArray = ["<a href = '#law'> We used the Death Penalty Information Center to find this information.</a>"];
 //Color array for law data -- just threw in some random colors for now
@@ -49,7 +50,7 @@ function initialize(){
   yearExpressed = yearArray[yearArray.length-1];
     animateMap(yearExpressed, colorize, yearExpressedText);
     setMap();
-    createMenu(arrayLaw, colorArrayLaw, "Law: ", infoArray[0], linkArray[0]);
+    createMenu(arrayLaw, colorArrayLaw, "Legal Status: ", infoArray[0], linkArray[0]);
     $(".Law").css({'background-color': '#CCCCCC','color': '#333333'});
     //disables buttons on load
     $('.stepBackward').prop('disabled', true);
@@ -80,8 +81,6 @@ function setMap() {
         .defer(d3.json, "../data/continentalUS.topojson")
         .defer(d3.csv, "../data/Law.csv")
         .defer(d3.csv,"../data/allExecutions.csv")
-
-
         .await(callback);
         //retrieve and process json file and data
         function callback(error, continentalUS, Law, allExecutions){
@@ -103,7 +102,6 @@ function setMap() {
                 //loop through the csv and tie it to the topojson
 //console.log(csvData.length);
                  for(var i=0; i<csvData.length; i++){
-                   console.log(csvData.length);
                     var csvState = csvData[i];
                     var csvLink = csvState.NAME;
                     //loop through states and assign  data
@@ -143,10 +141,42 @@ function setMap() {
             var statesColor = states.append("desc")
                 .text(function(d) {
                     return choropleth(d, colorize);
+
                 })
             changeAttribute(yearExpressed, colorize);
-        }; //END callback
-    }; //END setmap
+        }; //callback end
+    }; //setmap end
+
+
+
+    //for our menu, which will include law, overlay of total executions
+    function drawMenu(){
+        //click changes on Overview
+        $(".Law").click(function(){
+            expressed = Category[0];
+            yearExpressed = yearArray[yearArray.length-1];
+            d3.selectAll(".yearExpressedText").remove();
+            drawMenuInfo(colorize, yearExpressed);
+            $('.stepBackward').prop('disabled', true);
+            $('.play').prop('disabled', true);
+            $('.pause').prop('disabled', true);
+            $('.stepForward').prop('disabled', true);
+            d3.selectAll(".menu-options div").style({'background-color': '#e1e1e1','color': '#969696'});
+            d3.selectAll(".states").style("fill", function(d){
+                    return choropleth(d, colorize);
+                })
+                .select("desc")
+                    .text(function(d) {
+                        return choropleth(d, colorize);
+                });
+            createMenu(arrayLaw, colorArrayLaw, "Law ", textArray[0], linkArray[0]);
+            $(".Overview").css({'background-color': '#CCCCCC','color': '#333333'});
+            //removes chart
+            var oldChart = d3.selectAll(".chart").remove();
+            var oldRects = d3.selectAll(".chartRect").remove();
+        });
+    };
+
     function colorScale(data){
     // this if/else statement determines which variable is currently being expressed and assigns the appropriate color scheme to currentColors
         if (expressed === "Law") {
@@ -155,14 +185,12 @@ function setMap() {
         } else if (expressed === "allExecutions") {
           //call function to activate proportional symbols
         };
+        //ordinal scale = discrete, like names or categories (use for law variable)
         scale = d3.scale.ordinal()
                     .range(currentColors)
-                    .domain(currentArray); //sets the range of colors and domain of values based on the currently selected
-
-
+                    .domain(currentArray);
     };
 
-//
 // //function to set the enumeration units in the map
 // function setEnumerationUnits(states, map, path, colorScale) {
 //   //console.log("enum");
@@ -214,33 +242,7 @@ return scale(data[yearExpressed]);
 //         return "#CCC";
 //   };
 // };
-//menu items function
-function drawMenu(){
-    //click changes on Overview
-    $(".Law").click(function(){
-        expressed = Category[0];
-        yearExpressed = yearArray[yearArray.length-1];
-        d3.selectAll(".yearExpressedText").remove();
-        drawMenuInfo(colorize, yearExpressed);
-        $('.stepBackward').prop('disabled', true);
-        $('.play').prop('disabled', true);
-        $('.pause').prop('disabled', true);
-        $('.stepForward').prop('disabled', true);
-        d3.selectAll(".menu-options div").style({'background-color': '#e1e1e1','color': '#969696'});
-        d3.selectAll(".states").style("fill", function(d){
-                return choropleth(d, colorize);
-            })
-            .select("desc")
-                .text(function(d) {
-                    return choropleth(d, colorize);
-            });
-        createMenu(arrayLaw, colorArrayLaw, "Law ", textArray[0], linkArray[0]);
-        $(".Overview").css({'background-color': '#CCCCCC','color': '#333333'});
-        //removes chart
-        var oldChart = d3.selectAll(".chart").remove();
-        var oldRects = d3.selectAll(".chartRect").remove();
-    });
-};
+
 
 
 //creates dropdown menu
