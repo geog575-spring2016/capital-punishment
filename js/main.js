@@ -1,7 +1,7 @@
 //bugs/issues to deal with:
 //1) determine how to label states separately (because now we're using the unique field = no spaces)
-//2) figure out how to cycle over time automatically
-//3) figure out how to create proportional symbols (raw data for # executions per state in each year) = KAI
+//2) how to cycle over time automatically
+//3) how to create proportional symbols (raw data for # executions per state in each year) = KAI
 //4) choropleth for laws... still gotta figure that out = NATALEE & GABY
 
 
@@ -44,15 +44,33 @@ var joinedJson;
 //when window loads, initiate map
 window.onload = initialize();
 
+//jquery function changes active state of navbar
+$(function(){
+    $('.nav li a').on('click', function(e){
+        var $thisLi = $(this).parent('li');
+        var $ul = $thisLi.parent('ul');
+
+        if (!$thisLi.hasClass('active')){
+            $ul.find('li.active').removeClass('active');
+                $thisLi.addClass('active');
+        }
+    })
+});//end navbar function
+
+
 //start function for website
 function initialize(){
   expressed = topicArray[0];
   yearExpressed = yearArray[yearArray.length-1];
+  //call function to animate the map to iterate over the years
     animateMap(yearExpressed, colorize, yearExpressedText);
+    //call setmap to set up the map
     setMap();
+    //function to create the menu, including a blurb about the section and link to source
     createMenu(arrayLaw, colorArrayLaw, "Legal Status: ", infoArray[0], linkArray[0]);
-    $(".Law").css({'background-color': '#CCCCCC','color': '#333333'});
-    //disables buttons on load
+    //css styling for the law choropleth
+    $(".Law").css({'background-color': 'orange','color': 'yellow'});
+    //disables buttons on load (kai is also working on the buttons/timeline, this may need to be changed)
     $('.stepBackward').prop('disabled', true);
     $('.play').prop('disabled', true);
     $('.pause').prop('disabled', true);
@@ -62,7 +80,6 @@ function initialize(){
 
 //set up the choropleth
 function setMap() {
-
     // map variable, an svg element with attributes styled in style.css
     var map = d3.select("#mainmap")
         .append("svg")
@@ -78,36 +95,42 @@ function setMap() {
         .projection(projection);
         //load in the data
     d3_queue.queue()
+    //the order of these matter! this is brand new information to me... :)
         .defer(d3.json, "../data/continentalUS.topojson")
         .defer(d3.csv, "../data/Law.csv")
         .defer(d3.csv,"../data/allExecutions.csv")
         .await(callback);
-        //retrieve and process json file and data
+        //call the function to create the menu, law choropleth as default on load
+        drawMenu();
+        //retrieve and process json file and data, same order as the queue function to load data
         function callback(error, continentalUS, Law, allExecutions){
             //Variable to store the continentalUS json with all attribute data
             joinedJson = topojson.feature(continentalUS, continentalUS.objects.states).features;
             colorize = colorScale(joinedJson);
-
-            //Create an Array with CSV's loaded
+            //array for the csvs
             var csvArray = [Law, allExecutions];
-            //Names for the overall Label we'd like to assign them
+            //names for the overall Label we'd like to assign them
             var attributeNames = ["Law", "allExecutions"];
-            //For each CSV in the array, run the joinData function
+
             for (csv in csvArray){
-                joinData(continentalUS, csvArray[csv], attributeNames[csv]);
+              //csvArray[csv] = actual attribute information
+              //attributeNames[csv] = just the names stored
+              //for the csvs in the arrays, run the join data function:
+              joinData(continentalUS, csvArray[csv], attributeNames[csv]);
             };
-//console.log(continentalUS);
             function joinData(topojson, csvData, attribute){
+
                  var jsonStates = continentalUS.objects.states.geometries;
                 //loop through the csv and tie it to the topojson
-//console.log(csvData.length);
+console.log(jsonStates);
+
                  for(var i=0; i<csvData.length; i++){
                     var csvState = csvData[i];
-                    var csvLink = csvState.NAME;
-                    //loop through states and assign  data
+                    var csvLink = csvState.abrev;
+                    //for each state in jsonStates, loop through and link it to the csv data
                     for(var a=0; a<jsonStates.length; a++){
                         //check if NAME = NAME, which will join
-                        if (jsonStates[a].properties.NAME == csvLink){
+                        if (jsonStates[a].properties.abrev == csvLink){
                             attrObj = {};
                             //loop to assign key/value pairs to json object
                             for(var year in yearArray){
@@ -127,7 +150,7 @@ function setMap() {
                 .enter()
                 .append("path")
                 .attr("class", function(d){
-                    return "states " + d.properties.NAME;
+                    return "states " + d.properties.abrev;
                 })
                 .style("fill", function(d){
                     return choropleth(d, colorize);
@@ -414,11 +437,11 @@ function changeAttribute(year, colorize){
 function highlight(data) {
     //this is a conditional statement, holds the currently highlighted feature
     var feature = data.properties ? data.properties : data.feature.properties;
-    d3.selectAll("."+feature.NAME)
+    d3.selectAll("."+feature.abrev)
         .style("fill", "#923402");
 
     //set the state name as the label title
-    var labelName = feature.NAME;
+    var labelName = feature.abrev;
     var labelAttribute;
 
     //set up the text for the dynamic labels for the map
@@ -431,7 +454,7 @@ function highlight(data) {
     var retrievelabel = d3.select(".map")
         .append("div")
         .attr("class", "retrievelabel")
-        .attr("id",feature.NAME+"label")
+        .attr("id",feature.abrev+"label")
 
     var labelTitle = d3.select(".retrievelabel")
         .html(labelName)
@@ -446,10 +469,10 @@ function highlight(data) {
 function dehighlight(data) {
     var feature = data.properties ? data.properties : data.feature.properties;
 
-    var deselect = d3.selectAll("#"+feature.NAME+"label").remove();
+    var deselect = d3.selectAll("#"+feature.abrev+"label").remove();
 
     //dehighlighting the states
-    var selection = d3.selectAll("."+feature.NAME)
+    var selection = d3.selectAll("."+feature.abrev)
         .filter(".states");
     var fillColor = selection.select("desc").text();
     selection.style("fill", fillColor);
@@ -467,13 +490,13 @@ function setLabel(props) {
             //set up class named retrievelabel to edit style
             "class": "retrievelabel",
             //use the attribute NAME to label the county
-            "id": props.NAME
+            "id": props.abrev
         })
         .html(labelAttribute);
 
     var stateName = retrievelabel.append("div")
         .attr("class", "labelname")
-        .html(props.NAME);
+        .html(props.abrev);
 };
 //set up function for label placement as mouse moves
 function moveLabel(){
