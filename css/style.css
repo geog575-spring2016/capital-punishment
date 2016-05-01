@@ -1,6 +1,43 @@
 
 /******MAP STYLING******/
 
+
+.map {
+    background-color: #fff;
+    margin-left: 26%;
+    padding-left: 3%;
+    background: none;
+}
+
+.states {
+    fill: #808080;
+    stroke: #fff;
+    stroke-width: 0.5px;
+    float:left;
+}
+
+.jumbotron {
+    padding: 20px;
+    padding-left: 60px;
+    padding-right: 60px;
+}
+
+.infoLabel {
+    position: absolute;
+    height: auto;
+    /*border: solid thin #fff;*/
+    padding: 10px;
+    float:right;
+    display:inline-block;
+    margin-right:-200px;
+}
+
+
+.page-header {
+    margin-top: 0px;
+}
+
+
 .banner {
     position: absolute;
 }
@@ -14,26 +51,14 @@
     padding: 10px;
     background-color: #fff;
 }
-
-.map {
-    position: absolute;
-    top: 210px;
-    left: 0px ;
-    border: none;
-    width: 80%;
-    margin-left: 15%;
-    padding-left: 3%;
-    background-color: #000;
-}
-
-
-
 .USstates {
     fill: white;
     stroke: #fff;
     stroke-width: 0.5px;
     float:left;
 }
+
+
 
 /******TITLE STYLING******/
 
@@ -42,9 +67,17 @@
 
 /******INFOLABEL STYLING******/
 
+.retrievelabel h1 {
+    margin: 0 10px 0 0;
+    padding: 0;
+    display: inline-block;
+    line-height: 1em;
+}
+
+
 .retrievelabel {
     position: absolute;
-    height: 50px;
+    height: 100px;
     min-width: 10px;
     color: #000000;
     background-color: white;
@@ -53,12 +86,5 @@
     top: 50px;
     font-family: Arial;
     left: 100px;
-    top: 300px;
-}
-
-.retrievelabel h1 {
-    margin: 0 10px 0 0;
-    padding: 0;
-    display: inline-block;
-    line-height: 1em;
+    top: 200px;
 }

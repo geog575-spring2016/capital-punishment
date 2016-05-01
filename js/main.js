@@ -8,7 +8,6 @@
 (function(){
 
 
-
 //****HERE ARE SOME GLOBAL VARIABLES****//
 var topicArray = ["allExecutions",
                   "Law"]; //category
@@ -415,39 +414,55 @@ function changeAttribute(year, colorize){
 
 
 
+function highlight(data) {
+    //holds the currently highlighted feature
+    var feature = data.properties ? data.properties : data.feature.properties;
+    d3.selectAll("."+feature.NAME)
+        .style("fill", "white");
 
-//function to highlight enumeration units and bars on mouseover
-function highlight(props){
-    //change stroke on mouseover
-    var selected = d3.selectAll("." + props.NAME)
-        .style({
-            "stroke": "white",
-            "stroke-width": "4"
-        });
-    setLabel(props);
+    //set the state name as the label title
+    var labelName = feature.NAME;
+    var labelAttribute;
+
+    //set up the text for the dynamic labels for the map
+    //labels should match the yearExpressed and the state of the law during that year
+    if (expressed == "Law") {
+        labelAttribute = "Report Card: "+feature[expressed][Number(yearExpressed)];
+    } else if (expressed == "allExecutions") {
+        labelAttribute = yearExpressed+"<br>law law "+feature[expressed][Number(yearExpressed)];
+    }
+    var retrievelabel = d3.select(".map")
+        .append("div")
+        .attr("class", "retrievelabel")
+        .attr("id",feature.postal+"label")
+        .attr("padding-left", 500+"px");
+
+    var labelTitle = d3.select(".retrievelabel")
+        .html(labelName)
+        .attr("class", "labelTitle");
+
+    var labelAttribute = d3.select(".labelTitle")
+        .append("div")
+        .html(labelAttribute)
+        .attr("class", "labelAttribute")
 };
-function dehighlight(props) {
-    var selected = d3.selectAll("." + props.NAME)
-        .style({
-            "stroke": function(){
-                return getStyle(this, "stroke")
-            },
-            "stroke-width": function(){
-                return getStyle(this, "stroke-width")
-            }
-        });
-//grab the style in "desc" to restyle the county after mouseout
-    function getStyle(element, styleName){
-        var styleText = d3.select(element)
-            .select("desc")
-            .text();
-//set up variable styleObject to parse as string as JSON
-        var styleObject = JSON.parse(styleText);
-        return styleObject[styleName];
-    };
-    d3.select(".retrievelabel")
-        .remove();
+//Dehlighting for the map & chart
+function dehighlight(data) {
+    var feature = data.properties ? data.properties : data.feature.properties;
+
+    var deselect = d3.selectAll("#"+feature.NAME+"label").remove();
+
+    //dehighlighting the states
+    var selection = d3.selectAll("."+feature.NAME)
+        .filter(".states");
+    var fillColor = selection.select("desc").text();
+    selection.style("fill", fillColor);
+
 };
+
+
+
+
 function setLabel(props) {
     //label content
     var labelAttribute = "<h1>" + props[expressed] +
