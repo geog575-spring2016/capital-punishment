@@ -1,8 +1,7 @@
 //bugs/issues to deal with:
 //1) determine how to label states separately (because now we're using the unique field = no spaces)
-//2) how to cycle over time automatically
+//2) how to cycle over time - NATALEE
 //3) how to create proportional symbols (raw data for # executions per state in each year) = KAI
-//4) get law array items to correspond with an arrayLaw color -- not just default to the first one!
 
 //****GLOBAL VARIABLES****//
 var topicArray = ["Law",
@@ -26,12 +25,12 @@ var colorize;
 var yearExpressed;
 var yearExpressedText;
 //Color array for law data -- just threw in some random colors for now
-var colorArrayLaw      = [  "red", //legal
-                            "orange", //illegal
-                            "yellow", //moratorium
-                            "green", //formal hold
-                            "blue", //de facto moratorium
-                          "pink" ]; //de facto momemto
+var colorArrayLaw      = [ "#525252",
+                            "#737373",
+                            "#969696",
+                            "#bdbdbd",
+                            "#d9d9d9",
+                            "#efefef"  ];
 //the map width is a function of window size
 var mapWidth = window.innerWidth * 0.7,
 mapHeight = 600;
@@ -93,7 +92,8 @@ function setMap() {
         //retrieve and process json file and data, same order as the queue function to load data
         function callback(error, Law, allExecutions, continentalUS){
             //variable to store the continentalUS json with all attribute data
-            joinedJson = topojson.feature(continentalUS, continentalUS.objects.states).features;
+            joinedJson = topojson.feature(continentalUS,
+              continentalUS.objects.states).features;
             //colorize is colorscale function called for the joined data
             colorize = colorScale(joinedJson);
             //array for the csvs
@@ -169,15 +169,15 @@ function setMap() {
                 //the code does make it to this point:
                 //console.log("made it here");
                 //right now, commenting this out doesn't matter. why?
-            changeAttribute(yearExpressed, colorize);
         }; //callback end
     }; //setmap end
 
     //for our menu, which will include law, overlay of total executions
+    //menu items function
     function drawMenu(){
-        //click changes on law
+        //click changes on Overview
         $(".Legal").click(function(){
-            expressed = topicArray[0];
+            expressed = Category[0];
             yearExpressed = yearArray[yearArray.length-1];
             d3.selectAll(".yearExpressedText").remove();
             drawMenuInfo(colorize, yearExpressed);
@@ -185,7 +185,7 @@ function setMap() {
             $('.play').prop('disabled', true);
             $('.pause').prop('disabled', true);
             $('.stepForward').prop('disabled', true);
-            d3.selectAll(".menu-options div").style({'background-color': 'orange','color': 'green'});
+            d3.selectAll(".menu-options div").style({'background-color': '#e1e1e1','color': '#969696'});
             d3.selectAll(".states").style("fill", function(d){
                     return choropleth(d, colorize);
                 })
@@ -193,13 +193,14 @@ function setMap() {
                     .text(function(d) {
                         return choropleth(d, colorize);
                 });
-            createMenu(arrayLaw, colorArrayLaw, "Law ", textArray[0]);
+            createMenu(arrayOverview, colorArrayOverview, "Legal Status: ");
             $(".Legal").css({'background-color': '#CCCCCC','color': '#333333'});
             //removes chart
             var oldChart = d3.selectAll(".chart").remove();
             var oldRects = d3.selectAll(".chartRect").remove();
         });
-    };
+
+    }; //end drawMenu
 
     function colorScale(data){
       //console.log("made it to colorscale");
@@ -216,13 +217,10 @@ function setMap() {
         //here is where we call the function for the prop symbols that kai is working on... I think.
         };
       //console.log(data);
-        //console.log(yearExpressed);
         //ordinal scale = discrete, like names or categories (use for law variable)
         scale = d3.scale.ordinal()
                     .range(currentColors)
                     .domain(currentArray);
-        //console.log(data[yearExpressed]);
-        //console.log(data);
         return scale(data[yearExpressed]);
 };
 
@@ -310,12 +308,16 @@ function createMenu(arrayX, arrayY, title, infotext, infolink){
 
 //vcr controls click events
 function animateMap(yearExpressed, colorize, yearExpressedText){
+  console.log("made it to animatemap");
     //step backward functionality
     $(".stepBackward").click(function(){
         if (yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
+          console.log("if");
             yearExpressed--;
+
             changeAttribute(yearExpressed, colorize);
         } else {
+          console.log("else");
             yearExpressed = yearArray[yearArray.length-1];
             changeAttribute(yearExpressed, colorize);
         };
@@ -368,30 +370,103 @@ console.log("made it to d3.selectAll states")
                 return choropleth(d, colorize);
         });
      //timeline year text stuff: not important yet
-    // var timelineYear = d3.select(".timeline")
-    //     .selectAll('g')
-    //     .attr("font-weight", function(d){
-    //         if (year == d.getFullYear()){
-    //             return "bold";
-    //         } else {
-    //             return "normal";
-    //         }
-    //     }).attr("font-size", function(d){
-    //         if (year == d.getFullYear()){
-    //             return "18px";
-    //         } else {
-    //             return "12px";
-    //         }
-    //     }).attr("stroke", function(d){
-    //         if (year == d.getFullYear()){
-    //             return "orange";
-    //         } else {
-    //             return "blue";
-    //         }
-    //      });
-    // drawMenuInfo(colorize, year);
-  //  console.log(timelineYear);
+    var timelineYear = d3.select(".timeline")
+    console.log("made it to timelineYear")
+        .selectAll('g')
+        .attr("font-weight", function(d){
+            if (year == d.getFullYear()){
+                return "bold";
+            } else {
+                return "normal";
+            }
+        }).attr("font-size", function(d){
+            if (year == d.getFullYear()){
+                return "18px";
+            } else {
+                return "12px";
+            }
+        }).attr("stroke", function(d){
+            if (year == d.getFullYear()){
+                return "orange";
+            } else {
+                return "blue";
+            }
+          });
+     drawMenuInfo(colorize, year);
+    console.log(timelineYear);
 }; //end of changeAttribute
+
+
+//creates the menu items
+function createMenu(arrayX, arrayY, title, infotext, infolink){
+    var yArray = [40, 85, 130, 175, 220, 265];
+    var oldItems = d3.selectAll(".menuBox").remove();
+    var oldItems2 = d3.selectAll(".menuInfoBox").remove();
+    
+    //creates menuBoxes
+    menuBox = d3.select(".menu-inset")
+            .append("svg")
+            .attr("width", menuWidth)
+            .attr("height", menuHeight)
+            .attr("class", "menuBox");
+
+    //creates Menu Title
+    var menuTitle = menuBox.append("text")
+        .attr("x", 10)
+        .attr("y", 30)
+        .attr("class","title")
+        .text(title)
+        .style("font-size", '16px');
+
+    //draws and shades boxes for menu
+    for (b = 0; b < arrayX.length; b++){
+       var menuItems = menuBox.selectAll(".items")
+            .data(arrayX)
+            .enter()
+            .append("rect")
+            .attr("class", "items")
+            .attr("width", 35)
+            .attr("height", 35)
+            .attr("x", 15);
+
+        menuItems.data(yArray)
+            .attr("y", function(d, i){
+                return d;
+            });
+
+        menuItems.data(arrayY)
+            .attr("fill", function(d, i){
+                return arrayY[i];
+            });
+    };
+    //creates menulabels
+    var menuLabels = menuBox.selectAll(".menuLabels")
+        .data(arrayX)
+        .enter()
+        .append("text")
+        .attr("class", "menuLabels")
+        .attr("x", 60)
+        .text(function(d, i){
+            for (var c = 0; c < arrayX.length; c++){
+                return arrayX[i]
+            }
+        })
+        .style({'font-size': '14px', 'font-family': 'Open Sans, sans-serif'});
+
+        menuLabels.data(yArray)
+            .attr("y", function(d, i){
+                return d + 30;
+            });
+
+     //creates menuBoxes
+    menuInfoBox = d3.select(".menu-info")
+        .append("div")
+        .attr("width", menuInfoWidth)
+        .attr("height", menuInfoHeight)
+        .attr("class", "menuInfoBox textBox")
+        .html(infotext + infolink);
+}; //end createMenu
+
 
 function choropleth(d, year, colorize){
 //  console.log("in choropleth function");

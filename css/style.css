@@ -1,5 +1,4 @@
 
-/******MAP STYLING******/
 
 .map {
     background-color: #fff;
@@ -44,12 +43,7 @@
     fill: none;
     stroke: blue;
 }
-/******TITLE STYLING******/
 
-
-
-
-/******INFOLABEL STYLING******/
 
 .retrievelabel h1 {
     margin: 0 10px 0 0;
@@ -78,7 +72,7 @@
     line-height: 20px;
 }
 
-.Law {
+.Legal {
     text-align: center;
     padding: 10%;
 }
