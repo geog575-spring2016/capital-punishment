@@ -6,13 +6,11 @@
     float: right;
 }
 
-
 .timeline {
     position:absolute;
     font-family: Arial;
     font-size:12px;
-    fill: red;
-    stroke: gray;
+    fill: red;o    stroke: gray;
 }
 
 .timeline path,
@@ -107,4 +105,29 @@ h1 {
     float: right;
     padding-right: 0px;
     font-family: Arial;
+}
+
+/*code added for the slider, not sure how much we really need*/
+
+body {
+    font-family: sans-serif;
+}
+
+text {
+    font-family: sans-serif;
+    font-size: 11pt;
+}
+
+a {
+    color: #08c;
+    text-decoration: none;
+}
+
+a:hover {
+    color: violetred;
+    text-decoration: none;
+}
+
+input {
+    vertical-align: middle;
 }

@@ -4,6 +4,22 @@
 //3) how to create proportional symbols (raw data for # executions per state in each year) = KAI & GABY
 
 
+//Meeting with Robin 5/2
+//PSEUDOCODING TIME SEQUENCING//
+//1) what is the currently selected year? store as a variable = yearExpressedText
+//2) create the sequencing element (slider or play button, either jquery or d3)
+//3) create # of notches on slider (exact # of years)
+//4) assign each notch a year
+//5) function to step forwards or backwards
+//6) call a function to change choro to corresponding year
+//7) update the label
+//8) update the timeline visualization
+//9) eventually update the prop symbols too :)
+
+//d3 slider is what i'd like to use
+//Slider with min, max and step values:
+//d3.slider().axis(true).min(1977).max(2015).step(1)
+
 
 //****GLOBAL VARIABLES****//
 var topicArray = ["Law",
@@ -64,6 +80,7 @@ function initialize(){
     //call setmap to set up the map
     setMap();
     createMenu(arrayLaw, colorArrayLaw);
+
     $(".Legal").css({'background-color': '#CCCCCC','color': '#333333'});
 //this disables the buttons on load
 $('.stepBackward').prop('disabled', true);
@@ -173,7 +190,6 @@ function setMap() {
                 changeAttribute(yearExpressed, colorize);
         }; //callback end
     }; //setmap is bye
-
     //for our menu, which will include law, overlay of total executions
     function drawMenu(){
         //click changes on Overview
