@@ -41,19 +41,19 @@ var joinedJson;
 //when window loads, initiate map
 window.onload = initialize();
 
-// //jquery function changes active state of navbar
-// $(function(){
-//     $('.nav li a').on('click', function(e){
-//         var $thisLi = $(this).parent('li');
-//         var $ul = $thisLi.parent('ul');
-//
-//         if (!$thisLi.hasClass('active')){
-//             $ul.find('li.active').removeClass('active');
-//                 $thisLi.addClass('active');
-//         }
-//     })
-// });//end navbar function
-//start function for website
+//jquery function changes active state of navbar
+$(function(){
+    $('.nav li a').on('click', function(e){
+        var $thisLi = $(this).parent('li');
+        var $ul = $thisLi.parent('ul');
+
+        if (!$thisLi.hasClass('active')){
+            $ul.find('li.active').removeClass('active');
+                $thisLi.addClass('active');
+        }
+    })
+});//end navbar function
+
 function initialize(){
   expressed = topicArray[0];
   yearExpressed = yearArray[yearArray.length-1];
@@ -61,9 +61,14 @@ function initialize(){
    animateMap(yearExpressed, colorize, yearExpressedText);
     //call setmap to set up the map
     setMap();
-    //function to create the menu, including a blurb about the section and link to source
+    createMenu(arrayLaw, colorArrayLaw);
+    $(".Legal").css({'background-color': '#CCCCCC','color': '#333333'});
+//this disables the buttons on load
+$('.stepBackward').prop('disabled', true);
+$('.play').prop('disabled', true);
+$('.pause').prop('disabled', true);
+$('.stepForward').prop('disabled', true);
 }; // initialize OUT *mic drop*
-
 
 //set up the choropleth
 function setMap() {
@@ -118,10 +123,6 @@ function setMap() {
                     //for each state in jsonStates, loop through and link it to the csv data
                     for(var a=0; a<jsonStates.length; a++){
                         //check if abrev = abrev, it will join
-                      //  console.log(jsonStates);
-                        //console.log(jsonStates[a]);
-                        //right now, the line below is failing
-
                         if (jsonStates[a].properties.abrev == csvLink){
                           //if this evaluates to true, join is working:
                           //console.log(jsonStates[a].properties.abrev == csvLink);
@@ -166,14 +167,12 @@ function setMap() {
                     return choropleth(d, colorize);
 
                 })
-                //the code does make it to this point:
                 //console.log("made it here");
-                //right now, commenting this out doesn't matter. why?
+                changeAttribute(yearExpressed, colorize);
         }; //callback end
-    }; //setmap end
+    }; //setmap is bye
 
     //for our menu, which will include law, overlay of total executions
-    //menu items function
     function drawMenu(){
         //click changes on Overview
         $(".Legal").click(function(){
@@ -202,6 +201,267 @@ function setMap() {
 
     }; //end drawMenu
 
+    //creates dropdown menu
+    function drawMenuInfo(colorize, yearExpressed){
+        //creates year for map menu
+        yearExpressedText = d3.select(".menu-info")
+            .append("text")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("class", "yearExpressedText menu-info")
+            .text(yearExpressed)
+            .style({'font-size':'36px', 'font-weight': 'strong'});
+    }; //done with drawMenuInfo
+
+    //controls click events
+    function animateMap(yearExpressed, colorize, yearExpressedText){
+      console.log("made it to animatemap");
+      console.log(yearExpressed--);
+        //step backward on a click
+        $(".stepBackward").click(function(){
+          //steps back thru years if the year expressed is within range of array
+            if (yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
+              console.log("if");
+                yearExpressed--;
+
+                changeAttribute(yearExpressed, colorize);
+            } else {
+              console.log("else");
+                yearExpressed = yearArray[yearArray.length-1];
+                changeAttribute(yearExpressed, colorize);
+            };
+        });
+        //play function
+        $(".play").click(function(){
+            timer.play();
+            $('.play').prop('disabled', true);
+        });
+        //pause function
+        $(".pause").click(function(){
+            timer.pause();
+            $('.play').prop('disabled', false);
+            changeAttribute(yearExpressed, colorize);
+        });
+        //step forward function
+        $(".stepForward").click(function(){
+            if (yearExpressed < yearArray[yearArray.length-1]){
+                yearExpressed++;
+                changeAttribute(yearExpressed, colorize);
+            } else {
+                yearExpressed = yearArray[0];
+                changeAttribute(yearExpressed, colorize);
+            };
+        });
+    }; //end of animatemap
+
+    //iterate over the years
+    function mapSequence(yearsExpressed) {
+      console.log("made it to mapseq");
+      //whene sequencing, call the change attribute fxn
+        changeAttribute(yearExpressed, colorize);
+        if (yearsExpressed < keyArray[keyArray.length-1]){
+            yearExpressed++;
+        };
+    }; //end of mapseq
+
+    //changes the year displayed on map
+    function changeAttribute(year, colorize){
+      console.log("made it to changeAttribute");
+      //this stuff removes the old year info
+        for (y = 0; y < yearArray.length; y++){
+            if (year == yearArray[y]) {
+              //y represents the year
+                 yearExpressed = yearArray[y];
+                // console.log(yearExpressed = yearArray[y]);
+                console.log(yearArray[y]);
+            }
+        }
+        //colorizes the states
+    console.log("made it to d3.selectAll states")
+        d3.selectAll(".states")
+            .style("fill", function(year){
+            //console.log("makes it to styling states");
+                return choropleth(year, colorize);
+            })
+            .select("desc")
+                .text(function(d) {
+                    return choropleth(d, colorize);
+            });
+         //timeline stuff
+        var timelineYear = d3.select(".timeline")
+        console.log("made it to timelineYear")
+            .selectAll('g')
+            .attr("font-weight", function(d){
+                if (year == d.getFullYear()){
+                  console.log("bold");
+                    return "bold";
+                } else {
+                  console.log("normal");
+                    return "normal";
+                }
+            }).attr("font-size", function(d){
+                if (year == d.getFullYear()){
+                    return "18px";
+                } else {
+                    return "12px";
+                }
+            }).attr("stroke", function(d){
+                if (year == d.getFullYear()){
+                    return "orange";
+                } else {
+                    return "blue";
+                }
+              });
+         drawMenuInfo(colorize, year);
+        console.log("end of changeattribute");
+    }; //end of changeAttribute
+
+
+
+    //creates the menu items
+    function createMenu(arrayX, arrayY, title, infotext, infolink){
+        var yArray = [40, 85, 130, 175, 220, 265];
+        var oldItems = d3.selectAll(".menuBox").remove();
+        var oldItems2 = d3.selectAll(".menuInfoBox").remove();
+
+        //creates menu boxes
+        menuBox = d3.select(".menu-inset")
+                .append("svg")
+                .attr("width", menuWidth)
+                .attr("height", menuHeight)
+                .attr("class", "menuBox");
+
+        //creates Menu Title
+        var menuTitle = menuBox.append("text")
+            .attr("x", 10)
+            .attr("y", 30)
+            .attr("class","title")
+            .text(title)
+            .style("font-size", '16px');
+
+        //draws and shades boxes for menu
+        for (b = 0; b < arrayX.length; b++){
+           var menuItems = menuBox.selectAll(".items")
+                .data(arrayX)
+                .enter()
+                .append("rect")
+                .attr("class", "items")
+                .attr("width", 35)
+                .attr("height", 35)
+                .attr("x", 15);
+
+            menuItems.data(yArray)
+                .attr("y", function(d, i){
+                    return d;
+                });
+
+            menuItems.data(arrayY)
+                .attr("fill", function(d, i){
+                    return arrayY[i];
+                });
+        };
+        //creates menulabels
+        var menuLabels = menuBox.selectAll(".menuLabels")
+            .data(arrayX)
+            .enter()
+            .append("text")
+            .attr("class", "menuLabels")
+            .attr("x", 60)
+            .text(function(d, i){
+                for (var c = 0; c < arrayX.length; c++){
+                    return arrayX[i]
+                }
+            })
+            .style({'font-size': '14px', 'font-family': 'Open Sans, sans-serif'});
+
+            menuLabels.data(yArray)
+                .attr("y", function(d, i){
+                    return d + 30;
+                });
+
+         //creates menuBoxes
+        menuInfoBox = d3.select(".menu-info")
+            .append("div")
+            .attr("width", menuInfoWidth)
+            .attr("height", menuInfoHeight)
+            .attr("class", "menuInfoBox textBox")
+            .html(infotext + infolink);
+    }; //end createMenu
+
+
+
+
+    //creates the menu items
+    function createMenu(arrayX, arrayY, title, infotext, infolink){
+        var yArray = [40, 85, 130, 175, 220, 265];
+        var oldItems = d3.selectAll(".menuBox").remove();
+        var oldItems2 = d3.selectAll(".menuInfoBox").remove();
+
+        //creates menuBoxes
+        menuBox = d3.select(".menu-inset")
+                .append("svg")
+                .attr("width", menuWidth)
+                .attr("height", menuHeight)
+                .attr("class", "menuBox");
+
+        //creates Menu Title
+        var menuTitle = menuBox.append("text")
+            .attr("x", 10)
+            .attr("y", 30)
+            .attr("class","title")
+            .text(title)
+            .style("font-size", '16px');
+
+        //draws and shades boxes for menu
+        for (b = 0; b < arrayX.length; b++){
+           var menuItems = menuBox.selectAll(".items")
+                .data(arrayX)
+                .enter()
+                .append("rect")
+                .attr("class", "items")
+                .attr("width", 35)
+                .attr("height", 35)
+                .attr("x", 15);
+
+            menuItems.data(yArray)
+                .attr("y", function(d, i){
+                    return d;
+                });
+
+            menuItems.data(arrayY)
+                .attr("fill", function(d, i){
+                    return arrayY[i];
+                });
+        };
+        //creates menulabels
+        var menuLabels = menuBox.selectAll(".menuLabels")
+            .data(arrayX)
+            .enter()
+            .append("text")
+            .attr("class", "menuLabels")
+            .attr("x", 60)
+            .text(function(d, i){
+                for (var c = 0; c < arrayX.length; c++){
+                    return arrayX[i]
+                }
+            })
+            .style({'font-size': '14px', 'font-family': 'Open Sans, sans-serif'});
+
+            menuLabels.data(yArray)
+                .attr("y", function(d, i){
+                    return d + 30;
+                });
+
+         //creates menuBoxes
+        menuInfoBox = d3.select(".menu-info")
+            .append("div")
+            .attr("width", menuInfoWidth)
+            .attr("height", menuInfoHeight)
+            .attr("class", "menuInfoBox textBox")
+            .html(infotext + infolink);
+    }; //end createMenu
+
+
     function colorScale(data){
       //console.log("made it to colorscale");
     //determines which variable is being expressed, assigns the color scheme to empty currentColors array
@@ -224,248 +484,21 @@ function setMap() {
         return scale(data[yearExpressed]);
 };
 
-//creates dropdown menu
-function drawMenuInfo(colorize, yearExpressed){
-    //creates year for map menu
-    yearExpressedText = d3.select(".menu-info")
-        .append("text")
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("class", "yearExpressedText menu-info")
-        .text(yearExpressed)
-        .style({'font-size':'36px', 'font-weight': 'strong'});
-}; //done with drawMenuInfo
-
-//creates the menu items
-function createMenu(arrayX, arrayY, title, infotext, infolink){
-    var yArray = [40, 85, 130, 175, 220, 265];
-    var oldItems = d3.selectAll(".menuBox").remove();
-    var oldItems2 = d3.selectAll(".menuInfoBox").remove();
-
-    //creates menu boxes
-    menuBox = d3.select(".menu-inset")
-            .append("svg")
-            .attr("width", menuWidth)
-            .attr("height", menuHeight)
-            .attr("class", "menuBox");
-
-    //creates Menu Title
-    var menuTitle = menuBox.append("text")
-        .attr("x", 10)
-        .attr("y", 30)
-        .attr("class","title")
-        .text(title)
-        .style("font-size", '16px');
-
-    //draws and shades boxes for menu
-    for (b = 0; b < arrayX.length; b++){
-       var menuItems = menuBox.selectAll(".items")
-            .data(arrayX)
-            .enter()
-            .append("rect")
-            .attr("class", "items")
-            .attr("width", 35)
-            .attr("height", 35)
-            .attr("x", 15);
-
-        menuItems.data(yArray)
-            .attr("y", function(d, i){
-                return d;
-            });
-
-        menuItems.data(arrayY)
-            .attr("fill", function(d, i){
-                return arrayY[i];
-            });
+//Sets up color scale for chart
+function colorScaleChart(data) {
+    if (expressed === "Law") {
+        currentColors = colorArrayLaw;
+        currentArray = arrayLaw;
+    } else if (expressed === "allExecutions") {
+//call a function for all executions
     };
-    //creates menulabels
-    var menuLabels = menuBox.selectAll(".menuLabels")
-        .data(arrayX)
-        .enter()
-        .append("text")
-        .attr("class", "menuLabels")
-        .attr("x", 60)
-        .text(function(d, i){
-            for (var c = 0; c < arrayX.length; c++){
-                return arrayX[i]
-            }
-        })
-        .style({'font-size': '14px', 'font-family': 'Open Sans, sans-serif'});
 
-        menuLabels.data(yArray)
-            .attr("y", function(d, i){
-                return d + 30;
-            });
+    scale = d3.scale.ordinal()
+                .range(currentColors)
+                .domain(currentArray);
 
-     //creates menuBoxes
-    menuInfoBox = d3.select(".menu-info")
-        .append("div")
-        .attr("width", menuInfoWidth)
-        .attr("height", menuInfoHeight)
-        .attr("class", "menuInfoBox textBox")
-        .html(infotext + infolink);
-}; //end createMenu
-
-//vcr controls click events
-function animateMap(yearExpressed, colorize, yearExpressedText){
-  console.log("made it to animatemap");
-    //step backward functionality
-    $(".stepBackward").click(function(){
-        if (yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
-          console.log("if");
-            yearExpressed--;
-
-            changeAttribute(yearExpressed, colorize);
-        } else {
-          console.log("else");
-            yearExpressed = yearArray[yearArray.length-1];
-            changeAttribute(yearExpressed, colorize);
-        };
-    });
-    //play functionality
-    $(".play").click(function(){
-        timer.play();
-        $('.play').prop('disabled', true);
-    });
-    //pause functionality
-    $(".pause").click(function(){
-        timer.pause();
-        $('.play').prop('disabled', false);
-        changeAttribute(yearExpressed, colorize);
-    });
-    //step forward functionality
-    $(".stepForward").click(function(){
-        if (yearExpressed < yearArray[yearArray.length-1]){
-            yearExpressed++;
-            changeAttribute(yearExpressed, colorize);
-        } else {
-            yearExpressed = yearArray[0];
-            changeAttribute(yearExpressed, colorize);
-        };
-    });
-};
-
-
-
-//changes year displayed on map
-function changeAttribute(year, colorize){
-  console.log("made it to changeAttribute");
-  //this stuff removes the old year info
-    for (y = 0; y < yearArray.length; y++){
-        if (year == yearArray[y]) {
-          //y represents the year
-             yearExpressed = yearArray[y];
-            // console.log(yearExpressed = yearArray[y]);
-        }
-    }
-    //colorizes the states
-console.log("made it to d3.selectAll states")
-    d3.selectAll(".states")
-        .style("fill", function(year){
-        //console.log("makes it to styling states");
-            return choropleth(year, colorize);
-        })
-        .select("desc")
-            .text(function(d) {
-                return choropleth(d, colorize);
-        });
-     //timeline year text stuff: not important yet
-    var timelineYear = d3.select(".timeline")
-    console.log("made it to timelineYear")
-        .selectAll('g')
-        .attr("font-weight", function(d){
-            if (year == d.getFullYear()){
-                return "bold";
-            } else {
-                return "normal";
-            }
-        }).attr("font-size", function(d){
-            if (year == d.getFullYear()){
-                return "18px";
-            } else {
-                return "12px";
-            }
-        }).attr("stroke", function(d){
-            if (year == d.getFullYear()){
-                return "orange";
-            } else {
-                return "blue";
-            }
-          });
-     drawMenuInfo(colorize, year);
-    console.log(timelineYear);
-}; //end of changeAttribute
-
-
-//creates the menu items
-function createMenu(arrayX, arrayY, title, infotext, infolink){
-    var yArray = [40, 85, 130, 175, 220, 265];
-    var oldItems = d3.selectAll(".menuBox").remove();
-    var oldItems2 = d3.selectAll(".menuInfoBox").remove();
-    
-    //creates menuBoxes
-    menuBox = d3.select(".menu-inset")
-            .append("svg")
-            .attr("width", menuWidth)
-            .attr("height", menuHeight)
-            .attr("class", "menuBox");
-
-    //creates Menu Title
-    var menuTitle = menuBox.append("text")
-        .attr("x", 10)
-        .attr("y", 30)
-        .attr("class","title")
-        .text(title)
-        .style("font-size", '16px');
-
-    //draws and shades boxes for menu
-    for (b = 0; b < arrayX.length; b++){
-       var menuItems = menuBox.selectAll(".items")
-            .data(arrayX)
-            .enter()
-            .append("rect")
-            .attr("class", "items")
-            .attr("width", 35)
-            .attr("height", 35)
-            .attr("x", 15);
-
-        menuItems.data(yArray)
-            .attr("y", function(d, i){
-                return d;
-            });
-
-        menuItems.data(arrayY)
-            .attr("fill", function(d, i){
-                return arrayY[i];
-            });
-    };
-    //creates menulabels
-    var menuLabels = menuBox.selectAll(".menuLabels")
-        .data(arrayX)
-        .enter()
-        .append("text")
-        .attr("class", "menuLabels")
-        .attr("x", 60)
-        .text(function(d, i){
-            for (var c = 0; c < arrayX.length; c++){
-                return arrayX[i]
-            }
-        })
-        .style({'font-size': '14px', 'font-family': 'Open Sans, sans-serif'});
-
-        menuLabels.data(yArray)
-            .attr("y", function(d, i){
-                return d + 30;
-            });
-
-     //creates menuBoxes
-    menuInfoBox = d3.select(".menu-info")
-        .append("div")
-        .attr("width", menuInfoWidth)
-        .attr("height", menuInfoHeight)
-        .attr("class", "menuInfoBox textBox")
-        .html(infotext + infolink);
-}; //end createMenu
+    return scale(data);
+}; //end color for charts
 
 
 function choropleth(d, year, colorize){
@@ -484,6 +517,157 @@ var data = d.properties ? d.properties[expressed] : d;
 //console.log(data[yearExpressed]);
 return colorScale(data);
 };
+
+function choroplethChart(d, colorize) {
+    return colorScaleChart(d);
+};
+
+
+//sets up the chart
+function setChart(yearExpressed) {
+  console.log("made it to setchart");
+    // reset the timelineFeatureArray each time setChart is called
+    timelineFeatureArray = []; //this will hold the new feature objects that will include a value for which year a law changed
+    //initial setup of chart
+    var chart = d3.select(".graph")
+        .append("svg")
+        .attr("width", chartWidth+"px")
+        .attr("height", chartHeight+"px")
+        .attr("class", "chart");
+
+    //put all rects in a g element
+    var squareContainer = chart.append("g")
+        .attr("transform", "translate(" + margin.left + ', ' + margin.top + ')');
+
+    //for-loop creates an array of feature objects that stores three values: thisYear (for the year that a law was implemented), newLaw (the categorization of the new policy) and a feature object (the state that the law changed in)
+    for (var feature in joinedJson) {
+        var featureObject = joinedJson[feature];
+        for (var thisYear = 1; thisYear<=keyArray.length-1; thisYear++){
+            var lastYear = thisYear - 1;
+            if (featureObject.properties[expressed][keyArray[thisYear]] != featureObject.properties[expressed][keyArray[lastYear]]) { //have to account for the value not being undefined since the grade data is part of the linked data, and that's not relevant for the timeline
+                timelineFeatureArray.push({yearChanged: Number(keyArray[thisYear]), newLaw: featureObject.properties[expressed][keyArray[thisYear]], feature: featureObject}); //each time a law is passed in a given year, a new feature object is pushed to the timelineFeatureArray
+            };
+        };
+    };
+    var yearObjectArray = []; //will hold a count for how many features should be drawn for each year, the following for-loop does that
+
+    //for-loop determines how many rects will be drawn for each year
+    for (key in keyArray) {
+        var yearCount = 1;
+        for (i = 0; i < timelineFeatureArray.length; i++) {
+            //loop through here to see which year it matches and up
+            if (timelineFeatureArray[i].yearChanged == keyArray[key]) {
+                //countYears++;
+                yearObjectArray.push({"year": Number(keyArray[key]), "count":yearCount});
+                yearCount = yearCount++;
+            };
+        };
+    };
+
+    //attach data to the rects and start drawing them
+    chartRect = squareContainer.selectAll(".chartRect")
+        .data(timelineFeatureArray) //use data from the timelineFeatureArray, which holds all of the states that had some change in law
+        .enter()
+        .append("rect") //create a rectangle for each state
+        .attr("class", function(d) {
+            return "chartRect " + d.feature.properties.postal;
+        })
+        .attr("width", squareWidth+"px")
+        .attr("height", squareHeight+"px");
+
+    //determine the x-scale for the rects, determing where along the x-axis they will be drawn according to which year the law changed
+    var x = d3.scale.linear()
+        .domain([keyArray[0], keyArray[keyArray.length-1]]) //domain is an array of 2 values: the first and last years in the keyArray (1973 and 2014)
+        .rangeRound([0, chartWidth - margin.left - margin.right]); //range determines the x value of the square; it is an array of 2 values: the furthest left x value and the furthest right x value (on the screen)
+
+    //set a time scale for drawing the axis; use a separate time scale rather than a linear scale for formatting purposes.
+    var timeScale = d3.time.scale()
+        .domain([new Date(keyArray[1]), d3.time.year.offset(new Date(keyArray[keyArray.length-1]), 1)]) //domain is an array of 2 values: the first and last years in the keyArray (1973 and 2014)
+        .rangeRound([0, chartWidth - margin.left - margin.right]); //range determines the x value of the square; it is an array of 2 values: the furthest left x value and the furthest right x value (on the screen)
+
+    //place the rects on the chart
+    var rectStyle = chartRect.attr("transform", function(d) {
+            return "translate(" + x(d.yearChanged) + ")"; //this moves the rect along the x axis according to the scale, depending on the corresponding year that the law changed
+        })
+        //y-value determined by how many rects are being drawn for each year
+        .attr("y", function(d,i) {
+            var yValue = 0;
+            for (i = 0; i < yearObjectArray.length; i++) {
+                if (yearObjectArray[i].year == d.yearChanged) {
+                    yValue = yearObjectArray[i].count*(squareHeight+1);
+                    yearObjectArray[i].count-=1;
+                };
+            };
+            return yValue;
+        })
+        .style("fill", function(d) {
+            return choroplethChart(d.newLaw, colorize); //apply the color according to what the new law is in that year
+        })
+        .on("mouseover", highlightChart)
+        .on("mouseout", dehighlight);
+
+    //save text description of the color applied to each rect to be able to use this for dehighlight
+    rectColor = rectStyle.append("desc")
+            .text(function(d) {
+                return choroplethChart(d.newLaw, colorize);
+            })
+            .attr("class", "rectColor");
+
+    //Creates the axis function
+    var axis = d3.svg.axis()
+        .scale(timeScale)
+        .orient("bottom")
+        .ticks(d3.time.years, 1)
+        .tickFormat(d3.time.format('%y'))
+        .tickPadding(5) //distance between axis line and labels
+        .innerTickSize(50);
+
+    //sets the thickness of the line between the ticks and the corresponding squares in the chart
+    var timelineLine = axis.tickSize(1);
+
+    //sets the margins for the timeline transform
+    var timelineMargin = {top: 50, right: 20, bottom: 30, left:40};
+
+    //draw the timeline as a g element on the chart
+    var timeline = chart.append("g")
+        .attr("height", chartHeight)
+        .attr("width", chartWidth)
+        .attr('transform', 'translate(' + timelineMargin.left + ',' + (chartHeight - timelineMargin.top - timelineMargin.bottom) + ')') //set the starting x,y coordinates for where the axis will be drawn
+        .attr("class", "timeline")
+        .call(axis); //calls the axis function on the timeline
+
+    //adds mouse events
+    timeline.selectAll('g')
+        .each(function(d){
+            d3.select(this)
+             .on("mouseover", function(){
+                 d3.select(this)
+                    .attr("font-weight", "bold")
+                    .attr("cursor", "pointer")
+                    .attr("font-size", "18px")
+                    .attr("stroke", "#986cb3");
+            })
+            .on("mouseout", function(){
+                    d3.select(this)
+                        .attr("font-weight", "normal")
+                        .attr("font-size", "12px")
+                        .attr("stroke", "gray")
+                        .attr("cursor", "pointer");
+            })
+            .on("click", function(){
+                 d3.select(this)
+                    .attr("font-weight", "bold")
+                    .attr("cursor", "pointer")
+                    .attr("font-size", "18px")
+                    .attr("stroke", "#986cb3");
+                var year = d.getFullYear();
+                changeAttribute(year, colorize);
+                animateMap(year, colorize, yearExpressedText);
+            });
+        });
+};
+
+//HIGHLIGHT/DEHIGHLIGHT FUNCTIONS//
 
 
 function highlight(data) {
@@ -519,10 +703,46 @@ function highlight(data) {
         .html(labelAttribute)
         .attr("class", "labelAttribute")
 };
-//Dehlighting for the map & chart
+
+
+//Function for highlighting the chart
+function highlightChart(data) {
+    //holds the currently highlighted feature
+    var feature = data.properties ? data.properties : data.feature.properties;
+    d3.selectAll("."+feature.postal)
+        .style("fill", "#8856A7");
+
+    //set the state name as the label title
+    var labelName = feature.name;
+    var labelAttribute;
+
+    //set up the text for the dynamic labels
+    //when highlighting the chart, the labels reflect the year the law changed and the law that was changed that year, regardless of which year is being shown on the map
+    if (expressed == "Law") {
+        labelAttribute = data.yearChanged+"<br>Legal Status: "+data.newLaw;
+    } else if (expressed == "allExecutions") {
+        //do all execution stuff
+    }
+
+    var infoLabel = d3.select(".map")
+        .append("div")
+        .attr("class", "infoLabel")
+        .attr("id",feature.postal+"label")
+        .attr("padding-left", 500+"px");
+
+    var labelTitle = d3.select(".infoLabel")
+        .html(labelName)
+        .attr("class", "labelTitle");
+
+    var labelAttribute = d3.select(".labelTitle")
+        .append("div")
+        .html(labelAttribute)
+        .attr("class", "labelAttribute")
+};
+
+//both map/chart dehighlight
 function dehighlight(data) {
     var feature = data.properties ? data.properties : data.feature.properties;
-
     var deselect = d3.selectAll("#"+feature.abrev+"label").remove();
 
     //dehighlighting the states
@@ -531,6 +751,11 @@ function dehighlight(data) {
     var fillColor = selection.select("desc").text();
     selection.style("fill", fillColor);
 
+    //chart
+    var chartSelection = d3.selectAll("."+feature.abrev)
+        .filter(".chartRect");
+    var chartFillColor = chartSelection.select("desc").text();
+    chartSelection.style("fill", chartFillColor);
 };
 
 function setLabel(props) {
@@ -560,3 +785,13 @@ function moveLabel(){
 
     d3.select(".retrievelabel")
 };
+
+// jQuery timer for play/pause
+var timer = $.timer(function() {
+        if (yearExpressed == keyArray[keyArray.length-1]){
+            yearExpressed = keyArray[0];
+        };
+        animateMap(yearExpressed, colorize, yearExpressedText);
+        mapSequence(yearExpressed);
+	});
+timer.set({ time : 800, autostart : false });
