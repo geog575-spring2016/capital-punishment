@@ -2,11 +2,8 @@
 /******MAP STYLING******/
 
 .map {
-    background-color: #fff;
-    margin-left: 10%;
-    padding-left: 3%;
     background: none;
-    float: left;
+    float: right;
 }
 
 
@@ -32,7 +29,7 @@
 }
 
 #title {
-    height: 150px;
+    height: 100px;
     width: 100%;
     float: left;
     display: inline-block;
@@ -42,35 +39,43 @@
 }
 
 .yearExpressedText {
-    float: left;
-    font-family: Candara;
+    float: right;
+    font-family: Arial;
     color: white;
 }
 
+h1 {
+  top: 10px;
+}
 
-.retrievelabel h1 {
+.retrievelabel {
     margin: 0 10px 0 0;
     padding: 0;
     display: inline-block;
     line-height: 1em;
+    float: right;
+}
+
+.jumbotron {
+  height: 250px;
 }
 
 .labelTitle {
    position: absolute;
-   font-family: Candara;
+   font-family: Arial;
    font-weight:bold;
    font-size:20px;
    line-height:24px;
-   background-color: white;
+   background-color: darkgrey;
    color:black;
-   z-index: 2;
-   width:160px;
+   width:200px;
    float: left;
    padding: 3px;
+   left: 200px;
 }
 
 .labelAttribute {
-    font-family: Candara;
+    font-family: Arial;
     font-size:16px;
     line-height: 20px;
 }
@@ -85,4 +90,21 @@
     border-style: solid;
     border-width: 2px;
     border-color: white;
+}
+
+.menuInfoBox {
+    margin-left: 15%;
+    font-size: 14px;
+    font-family: Arial;
+}
+
+.textBox {
+    width: 20%;
+    float: right;
+}
+
+.yearExpressedText {
+    float: right;
+    padding-right: 0px;
+    font-family: Arial;
 }
