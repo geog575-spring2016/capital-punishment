@@ -156,7 +156,13 @@ h1 {
 }
 #play {
   left: 15px;
+  background: grey;
+  border: none;
+  font-size: 30px;
+  color: white;
 }
 #clock {
-  left: 65px;
+  left: 100px;
+  color: grey;
+  font-size: 30px;
 }

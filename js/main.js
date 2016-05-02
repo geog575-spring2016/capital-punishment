@@ -246,13 +246,13 @@ function setMap() {
           .on('click', function() {  // when user clicks the play button
             if(playing == false) { // if the map is currently playing
               timer = setInterval(function(){   // set a JS interval
-                if(currentAttribute < yearArray.length-1) {
-                    currentAttribute +=1;  // increment the current attribute counter
+                if(yearExpressed > yearArray.length-1) {
+                    yearExpressed -1;  // increment the current attribute counter
                 } else {
                     currentAttribute = 0;  // or reset it to zero
                 }
                 mapSequence();  // update the representation of the map
-                d3.select('#clock').html(yearArray[yearExpressed]);  // update the clock
+                d3.select('#clock').html(yearExpressed);  // update the clock
               }, 2000);
 
               d3.select(this).html('stop');  // change the button label to stop
@@ -267,11 +267,11 @@ function setMap() {
 
 
     //iterate over the years
-    function mapSequence(yearsExpressed) {
+    function mapSequence(yearExpressed) {
       console.log("made it to mapseq");
       //whene sequencing, call the change attribute fxn
         changeAttribute(yearExpressed, colorize);
-        if (yearsExpressed < yearArray[yearArray.length-1]){
+        if (yearExpressed < yearArray[yearArray.length-1]){
             yearExpressed++;
         };
     }; //end of mapseq
