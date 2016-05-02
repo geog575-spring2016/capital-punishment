@@ -1,7 +1,9 @@
 //bugs/issues to deal with:
 //1) determine how to label states separately (because now we're using the unique field = no spaces)
 //2) how to cycle over time - NATALEE
-//3) how to create proportional symbols (raw data for # executions per state in each year) = KAI
+//3) how to create proportional symbols (raw data for # executions per state in each year) = KAI & GABY
+
+
 
 //****GLOBAL VARIABLES****//
 var topicArray = ["Law",
@@ -203,6 +205,7 @@ function setMap() {
 
     //creates dropdown menu
     function drawMenuInfo(colorize, yearExpressed){
+      console.log("made it to drawmenuinfo");
         //creates year for map menu
         yearExpressedText = d3.select(".menu-info")
             .append("text")
@@ -222,6 +225,7 @@ function setMap() {
           //steps back thru years if the year expressed is within range of array
             if (yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
               console.log("if");
+              //iterate backwards through yearExpressed
                 yearExpressed--;
 
                 changeAttribute(yearExpressed, colorize);
@@ -288,8 +292,8 @@ function setMap() {
                     return choropleth(d, colorize);
             });
          //timeline stuff
+
         var timelineYear = d3.select(".timeline")
-        console.log("made it to timelineYear")
             .selectAll('g')
             .attr("font-weight", function(d){
                 if (year == d.getFullYear()){
@@ -320,6 +324,7 @@ function setMap() {
 
     //creates the menu items
     function createMenu(arrayX, arrayY, title, infotext, infolink){
+      console.log("made it to createmenu");
         var yArray = [40, 85, 130, 175, 220, 265];
         var oldItems = d3.selectAll(".menuBox").remove();
         var oldItems2 = d3.selectAll(".menuInfoBox").remove();

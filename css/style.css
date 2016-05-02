@@ -1,4 +1,5 @@
 
+/******MAP STYLING******/
 
 .map {
     background-color: #fff;
@@ -7,6 +8,22 @@
     background: none;
     float: left;
 }
+
+
+.timeline {
+    position:absolute;
+    font-family: Arial;
+    font-size:12px;
+    fill: red;
+    stroke: gray;
+}
+
+.timeline path,
+.timeline line {
+    fill: none;
+    stroke: blue;
+}
+
 
 .states {
     stroke: grey;
@@ -28,20 +45,6 @@
     float: left;
     font-family: Candara;
     color: white;
-}
-
-.timeline {
-    position:absolute;
-    font-family: Arial;
-    font-size:12px;
-    fill: red;
-    stroke: gray;
-}
-
-.timeline path,
-.timeline line {
-    fill: none;
-    stroke: blue;
 }
 
 
