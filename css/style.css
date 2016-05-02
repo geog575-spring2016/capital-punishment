@@ -107,27 +107,56 @@ h1 {
     font-family: Arial;
 }
 
-/*code added for the slider, not sure how much we really need*/
 
-body {
-    font-family: sans-serif;
+/*code for the world map, trying to get time sequencing*/
+/*code is from http://bl.ocks.org/rgdonohue/9280446*/
+
+#wrapper {
+    width: 960px;
+    margin: -30px auto 0;
+}
+#map {
+    width: 960px;
+    height: 580px;
+    position: relative;
+}
+.stroke {
+  fill: none;
+  stroke: #888;
+  stroke-width: 2px;
 }
 
-text {
-    font-family: sans-serif;
-    font-size: 11pt;
+.fill {
+  fill: #fff;
 }
 
-a {
-    color: #08c;
-    text-decoration: none;
+.graticule {
+  fill: none;
+  stroke: #777;
+  stroke-width: .5px;
+  stroke-opacity: .5;
 }
 
-a:hover {
-    color: violetred;
-    text-decoration: none;
+.land {
+  fill: #222;
 }
 
-input {
-    vertical-align: middle;
+.boundary {
+  fill: none;
+  stroke: #fff;
+  stroke-width: .5px;
+}
+.country {
+    fill: steelblue;
+    stroke: white;
+}
+#play, #clock {
+  position: absolute;
+  top: 15px;
+}
+#play {
+  left: 15px;
+}
+#clock {
+  left: 65px;
 }
