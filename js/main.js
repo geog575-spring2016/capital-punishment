@@ -3,7 +3,26 @@
 //2) how to cycle over time - NATALEE
 //3) how to create proportional symbols (raw data for # executions per state in each year) = KAI & GABY
 
-//testing testing 123
+
+//Meeting with Robin 5/2
+//PSEUDOCODING TIME SEQUENCING//
+//1) what is the currently selected year? store as a variable = yearExpressedText (DONE)
+//2) create the sequencing element (slider or play button, either jquery or d3) (DONE)
+//3) create # of notches on slider (exact # of years)
+//4) assign each notch a year
+//5) function to step forwards or backwards
+//6) call a function to change choro to corresponding year
+//7) update the label
+//8) update the timeline visualization
+//9) eventually update the prop symbols too :)
+
+//d3 play button is what i'd like to use
+//use abrupt change because it's a better visual metaphor for laws passing??
+//use this to work through how to get play button: http://bl.ocks.org/rgdonohue/9280446
+
+//To do for Thursday presentation
+//Priority is functionality over context
+//Get the play button to work and time to cycle through
 
 //****GLOBAL VARIABLES****//
 var topicArray = ["Law",
@@ -13,8 +32,7 @@ var arrayLaw = [ "Legal",
                   "Illegal",
                   "Moratorium",
                   "Formal Hold",
-                  "De Facto Moratorium",
-                  "De Facto Momento"];
+                  "De Facto Moratorium"];
 //array for year"s
 var yearArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995","1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"];
 
@@ -24,15 +42,15 @@ var currentArray = [];
 var expressed;
 var scale;
 var colorize;
+var playing = false; //default to not play on load
 var yearExpressed;
 var yearExpressedText;
 //Color array for law data -- just threw in some random colors for now
-var colorArrayLaw      = [ "#525252",
-                            "#737373",
-                            "#969696",
-                            "#bdbdbd",
-                            "#d9d9d9",
-                            "#efefef"  ];
+var colorArrayLaw      = [ "#f7f7f7",
+                           "#d9d9d9",
+                           "#bdbdbd",
+                           "#969696",
+                           "#636363"];
 //the map width is a function of window size
 var mapWidth = window.innerWidth * 0.7,
 mapHeight = 600;
@@ -43,18 +61,18 @@ var joinedJson;
 //when window loads, initiate map
 window.onload = initialize();
 
-//jquery function changes active state of navbar
-$(function(){
-    $('.nav li a').on('click', function(e){
-        var $thisLi = $(this).parent('li');
-        var $ul = $thisLi.parent('ul');
+// //jquery function changes active state of navbar
+// $(function(){
+//     $('.nav li a').on('click', function(e){
+//         var $thisLi = $(this).parent('li');
+//         var $ul = $thisLi.parent('ul');
 
-        if (!$thisLi.hasClass('active')){
-            $ul.find('li.active').removeClass('active');
-                $thisLi.addClass('active');
-        }
-    })
-});//end navbar function
+//         if (!$thisLi.hasClass('active')){
+//             $ul.find('li.active').removeClass('active');
+//                 $thisLi.addClass('active');
+//         }
+//     })
+// });//end navbar function
 
 function initialize(){
   expressed = topicArray[0];
@@ -64,6 +82,7 @@ function initialize(){
     //call setmap to set up the map
     setMap();
     createMenu(arrayLaw, colorArrayLaw);
+
     $(".Legal").css({'background-color': '#CCCCCC','color': '#333333'});
 //this disables the buttons on load
 $('.stepBackward').prop('disabled', true);
@@ -82,22 +101,24 @@ function setMap() {
         .attr("height", mapHeight);
 //set the projection for the US, equal area because choropeth
     var projection = d3.geo.albers()
-        .scale(1300)
+        .scale(1000)
         .translate([mapWidth / 2, mapHeight / 2]);
         //path to draw the map
     var path = d3.geo.path()
         .projection(projection);
         //load in the data
+
     d3_queue.queue()
-    //the order of these matter! this is brand new information to me... :)
-        .defer(d3.csv, "../data/Law.csv")
-        .defer(d3.csv,"../data/allExecutions.csv")
-        .defer(d3.json, "../data/continentalUS.topojson")
+    //queue funcion loads external data asynchronously
+        .defer(d3.csv, "../data/Law.csv") //laws by year
+        .defer(d3.csv,"../data/allExecutions.csv") //executions by year
+        .defer(d3.json, "../data/continentalUS.topojson") //geometries
         .await(callback);
         //call the function to create the menu, law choropleth as default on load
         drawMenu();
         //retrieve and process json file and data, same order as the queue function to load data
         function callback(error, Law, allExecutions, continentalUS){
+          //accepts errors from queue function as first argument
             //variable to store the continentalUS json with all attribute data
             joinedJson = topojson.feature(continentalUS,
               continentalUS.objects.states).features;
@@ -142,10 +163,12 @@ function setMap() {
 
                             };
                         jsonStates[a].properties[attribute] = attrObj;
-                         break;
+                         break; //stop looping through csv because it's joined
                         };
                     };
                  };
+                 console.log("made it to d3.select clock");
+                   d3.select('#clock').html(yearArray[yearExpressed]); 
             };
             //style states according to the data
             var states = map.selectAll(".states")
@@ -169,16 +192,19 @@ function setMap() {
                     return choropleth(d, colorize);
 
                 })
-                //console.log("made it here");
+                console.log("made it end of callback");
                 changeAttribute(yearExpressed, colorize);
+                mapSequence(yearExpressed);  // update the representation of the map
+
         }; //callback end
     }; //setmap is bye
+
 
     //for our menu, which will include law, overlay of total executions
     function drawMenu(){
         //click changes on Overview
         $(".Legal").click(function(){
-            expressed = Category[0];
+            expressed = topicArray[0];
             yearExpressed = yearArray[yearArray.length-1];
             d3.selectAll(".yearExpressedText").remove();
             drawMenuInfo(colorize, yearExpressed);
@@ -218,52 +244,40 @@ function setMap() {
 
     //controls click events
     function animateMap(yearExpressed, colorize, yearExpressedText){
-      console.log("made it to animatemap");
-      console.log(yearExpressed--);
-        //step backward on a click
-        $(".stepBackward").click(function(){
-          //steps back thru years if the year expressed is within range of array
-            if (yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
-              console.log("if");
-              //iterate backwards through yearExpressed
-                yearExpressed--;
 
-                changeAttribute(yearExpressed, colorize);
-            } else {
-              console.log("else");
-                yearExpressed = yearArray[yearArray.length-1];
-                changeAttribute(yearExpressed, colorize);
-            };
+
+        var timer;  // create timer object
+        d3.select('#play')
+          .on('click', function() {  // when user clicks the play button
+            if(playing == false) { // if the map is currently playing
+              timer = setInterval(function(){   // set a JS interval
+                if(yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
+                    yearExpressed--;  // increment the current attribute counter
+                    changeAttribute(yearExpressed, colorize);
+                } else {
+                    currentAttribute = 0;  // or reset it to zero
+                }
+                d3.select('#clock').html(yearExpressed);  // update the clock
+              }, 100);
+
+              d3.select(this).html('stop');  // change the button label to stop
+              playing = true;   // change the status of the animation
+            } else {    // else if is currently playing
+              clearInterval(timer);   // stop the animation by clearing the interval
+              d3.select(this).html('play');   // change the button label to play
+              playing = false;   // change the status again
+            }
+
         });
-        //play function
-        $(".play").click(function(){
-            timer.play();
-            $('.play').prop('disabled', true);
-        });
-        //pause function
-        $(".pause").click(function(){
-            timer.pause();
-            $('.play').prop('disabled', false);
-            changeAttribute(yearExpressed, colorize);
-        });
-        //step forward function
-        $(".stepForward").click(function(){
-            if (yearExpressed < yearArray[yearArray.length-1]){
-                yearExpressed++;
-                changeAttribute(yearExpressed, colorize);
-            } else {
-                yearExpressed = yearArray[0];
-                changeAttribute(yearExpressed, colorize);
-            };
-        });
-    }; //end of animatemap
+      }
+
 
     //iterate over the years
-    function mapSequence(yearsExpressed) {
+    function mapSequence(yearExpressed) {
       console.log("made it to mapseq");
       //whene sequencing, call the change attribute fxn
         changeAttribute(yearExpressed, colorize);
-        if (yearsExpressed < keyArray[keyArray.length-1]){
+        if (yearExpressed < yearArray[yearArray.length-1]){
             yearExpressed++;
         };
     }; //end of mapseq
@@ -393,9 +407,6 @@ function setMap() {
             .html(infotext + infolink);
     }; //end createMenu
 
-
-
-
     //creates the menu items
     function createMenu(arrayX, arrayY, title, infotext, infolink){
         var yArray = [40, 85, 130, 175, 220, 265];
@@ -495,7 +506,7 @@ function colorScaleChart(data) {
         currentColors = colorArrayLaw;
         currentArray = arrayLaw;
     } else if (expressed === "allExecutions") {
-//call a function for all executions
+//call a function for all executions prop symbols
     };
 
     scale = d3.scale.ordinal()
@@ -511,15 +522,6 @@ function choropleth(d, year, colorize){
 //conditional statement, setting data equal to
 console.log("made it to choropleth");
 var data = d.properties ? d.properties[expressed] : d;
-//console.log(data = d);
-//console.log(data = d.properties[expressed]);
-//console.log(d.properties = d.properties[expressed])
-//console.log(d.properties[expressed]);
-//console.log(d);
-//console.log(data);
-//console.log(d.properties[expressed]);
-//console.log(colorScale(data));
-//console.log(data[yearExpressed]);
 return colorScale(data);
 };
 
@@ -790,13 +792,3 @@ function moveLabel(){
 
     d3.select(".retrievelabel")
 };
-
-// jQuery timer for play/pause
-var timer = $.timer(function() {
-        if (yearExpressed == keyArray[keyArray.length-1]){
-            yearExpressed = keyArray[0];
-        };
-        animateMap(yearExpressed, colorize, yearExpressedText);
-        mapSequence(yearExpressed);
-	});
-timer.set({ time : 800, autostart : false });

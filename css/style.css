@@ -1,77 +1,42 @@
-
 /******MAP STYLING******/
 
-.map {
+#mainmap {
+  position: absolute;
     background: none;
-    float: right;
+    margin: 0px;
+    padding: 0px;
+    top: 0px;
 }
 
-
-.timeline {
-    position:absolute;
-    font-family: Arial;
-    font-size:12px;
-    fill: red;
-    stroke: gray;
+#title {
+  color: blue;
+  font-size: 12pt;
 }
-
-.timeline path,
-.timeline line {
-    fill: none;
-    stroke: blue;
-}
-
-
 .states {
-    stroke: grey;
+    stroke: white;
     stroke-width: 0.5px;
     float:left;
 }
 
-#title {
-    height: 100px;
-    width: 100%;
-    float: left;
-    display: inline-block;
-    margin: 5px auto;
-    padding: 10px;
-    background-color: #fff;
-}
-
-.yearExpressedText {
-    float: right;
-    font-family: Arial;
-    color: white;
-}
-
-h1 {
-  top: 10px;
-}
-
-.retrievelabel {
+/*.retrievelabel {
     margin: 0 10px 0 0;
     padding: 0;
     display: inline-block;
     line-height: 1em;
     float: right;
 }
-
-.jumbotron {
-  height: 250px;
-}
+*/
 
 .labelTitle {
-   position: absolute;
    font-family: Arial;
    font-weight:bold;
    font-size:20px;
    line-height:24px;
-   background-color: darkgrey;
-   color:black;
+   background-color: black;
+   color:grey;
    width:200px;
    float: left;
    padding: 3px;
-   left: 200px;
 }
 
 .labelAttribute {
@@ -93,7 +58,6 @@ h1 {
 }
 
 .menuInfoBox {
-    margin-left: 15%;
     font-size: 14px;
     font-family: Arial;
 }
@@ -107,4 +71,24 @@ h1 {
     float: right;
     padding-right: 0px;
     font-family: Arial;
+}
+/*code is from http://bl.ocks.org/rgdonohue/9280446*/
+
+
+#play, #clock {
+  position: absolute;
+  top: 15px;
+}
+#play {
+  left: 15px;
+  background: grey;
+  border: none;
+  font-size: 30px;
+  color: white;
+}
+
+#clock {
+  left: 100px;
+  color: grey;
+  font-size: 30px;
 }
