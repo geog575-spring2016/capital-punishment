@@ -6,8 +6,8 @@
 
 //Meeting with Robin 5/2
 //PSEUDOCODING TIME SEQUENCING//
-//1) what is the currently selected year? store as a variable = yearExpressedText
-//2) create the sequencing element (slider or play button, either jquery or d3)
+//1) what is the currently selected year? store as a variable = yearExpressedText (DONE)
+//2) create the sequencing element (slider or play button, either jquery or d3) (DONE)
 //3) create # of notches on slider (exact # of years)
 //4) assign each notch a year
 //5) function to step forwards or backwards
@@ -20,6 +20,10 @@
 //use abrupt change because it's a better visual metaphor for laws passing??
 //use this to work through how to get play button: http://bl.ocks.org/rgdonohue/9280446
 
+//To do for Thursday presentation
+//Priority is functionality over context
+//Get the play button to work and time to cycle through
+
 //****GLOBAL VARIABLES****//
 var topicArray = ["Law",
                   "allExecutions"]; //the first item in this array will be the default
@@ -28,8 +32,7 @@ var arrayLaw = [ "Legal",
                   "Illegal",
                   "Moratorium",
                   "Formal Hold",
-                  "De Facto Moratorium",
-                  "De Facto Momento"];
+                  "De Facto Moratorium"];
 //array for year"s
 var yearArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995","1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"];
 
@@ -40,16 +43,14 @@ var expressed;
 var scale;
 var colorize;
 var playing = false; //default to not play on load
-var currentAttribute = 0; //just trying this out to see what it does
 var yearExpressed;
 var yearExpressedText;
 //Color array for law data -- just threw in some random colors for now
-var colorArrayLaw      = [ "#525252",
-                            "#737373",
-                            "#969696",
-                            "#bdbdbd",
-                            "#d9d9d9",
-                            "#efefef"  ];
+var colorArrayLaw      = [ "#f7f7f7",
+                           "#d9d9d9",
+                           "#bdbdbd",
+                           "#969696",
+                           "#636363"];
 //the map width is a function of window size
 var mapWidth = window.innerWidth * 0.7,
 mapHeight = 600;
@@ -60,18 +61,18 @@ var joinedJson;
 //when window loads, initiate map
 window.onload = initialize();
 
-//jquery function changes active state of navbar
-$(function(){
-    $('.nav li a').on('click', function(e){
-        var $thisLi = $(this).parent('li');
-        var $ul = $thisLi.parent('ul');
+// //jquery function changes active state of navbar
+// $(function(){
+//     $('.nav li a').on('click', function(e){
+//         var $thisLi = $(this).parent('li');
+//         var $ul = $thisLi.parent('ul');
 
-        if (!$thisLi.hasClass('active')){
-            $ul.find('li.active').removeClass('active');
-                $thisLi.addClass('active');
-        }
-    })
-});//end navbar function
+//         if (!$thisLi.hasClass('active')){
+//             $ul.find('li.active').removeClass('active');
+//                 $thisLi.addClass('active');
+//         }
+//     })
+// });//end navbar function
 
 function initialize(){
   expressed = topicArray[0];
@@ -100,7 +101,7 @@ function setMap() {
         .attr("height", mapHeight);
 //set the projection for the US, equal area because choropeth
     var projection = d3.geo.albers()
-        .scale(1300)
+        .scale(1000)
         .translate([mapWidth / 2, mapHeight / 2]);
         //path to draw the map
     var path = d3.geo.path()
@@ -166,6 +167,8 @@ function setMap() {
                         };
                     };
                  };
+                 console.log("made it to d3.select clock");
+                   d3.select('#clock').html(yearArray[yearExpressed]); 
             };
             //style states according to the data
             var states = map.selectAll(".states")
@@ -189,11 +192,12 @@ function setMap() {
                     return choropleth(d, colorize);
 
                 })
-                //console.log("made it here");
+                console.log("made it end of callback");
                 changeAttribute(yearExpressed, colorize);
+                mapSequence(yearExpressed);  // update the representation of the map
+
         }; //callback end
     }; //setmap is bye
-
 
 
     //for our menu, which will include law, overlay of total executions
@@ -241,19 +245,20 @@ function setMap() {
     //controls click events
     function animateMap(yearExpressed, colorize, yearExpressedText){
 
+
         var timer;  // create timer object
         d3.select('#play')
           .on('click', function() {  // when user clicks the play button
             if(playing == false) { // if the map is currently playing
               timer = setInterval(function(){   // set a JS interval
-                if(yearExpressed > yearArray.length-1) {
-                    yearExpressed -1;  // increment the current attribute counter
+                if(yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
+                    yearExpressed--;  // increment the current attribute counter
+                    changeAttribute(yearExpressed, colorize);
                 } else {
                     currentAttribute = 0;  // or reset it to zero
                 }
-                mapSequence();  // update the representation of the map
                 d3.select('#clock').html(yearExpressed);  // update the clock
-              }, 2000);
+              }, 100);
 
               d3.select(this).html('stop');  // change the button label to stop
               playing = true;   // change the status of the animation
@@ -262,6 +267,7 @@ function setMap() {
               d3.select(this).html('play');   // change the button label to play
               playing = false;   // change the status again
             }
+
         });
       }
 
