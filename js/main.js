@@ -3,7 +3,7 @@
 //2) how to cycle over time - NATALEE
 //3) how to create proportional symbols (raw data for # executions per state in each year) = KAI & GABY
 
-
+//testing testing 123
 
 //****GLOBAL VARIABLES****//
 var topicArray = ["Law",
