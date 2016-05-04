@@ -1,7 +1,11 @@
+
+
 //bugs/issues to deal with:
 //1) determine how to label states separately (because now we're using the unique field = no spaces)
-//2) how to cycle over time - NATALEE
-//3) how to create proportional symbols (raw data for # executions per state in each year) = KAI & GABY
+//2) cycle over time (default to 2015 on load, on play, start at 1977 and sequence forward)- NATALEE
+//3) create proportional symbols (raw data for # executions per state in each year) = KAI & GABY
+//4) Add contextual information - KAI
+//5) Add pause/forward/back buttons - NATALEE
 
 
 //Meeting with Robin 5/2
@@ -16,14 +20,6 @@
 //8) update the timeline visualization
 //9) eventually update the prop symbols too :)
 
-//d3 play button is what i'd like to use
-//use abrupt change because it's a better visual metaphor for laws passing??
-//use this to work through how to get play button: http://bl.ocks.org/rgdonohue/9280446
-
-//To do for Thursday presentation
-//Priority is functionality over context
-//Get the play button to work and time to cycle through
-
 //****GLOBAL VARIABLES****//
 var topicArray = ["Law",
                   "allExecutions"]; //the first item in this array will be the default
@@ -37,14 +33,14 @@ var arrayLaw = [ "Legal",
 var yearArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995","1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"];
 
 //choropleth global variables
-var currentColors = [];
-var currentArray = [];
-var expressed;
-var scale;
-var colorize;
+var currentColors = []; //empty array to fill with corresponding colors
+var currentArray = []; //empty array to fill with the current topic
+var expressed; //
+var scale; //
+var colorize; //
 var playing = false; //default to not play on load
-var yearExpressed;
-var yearExpressedText;
+var yearExpressed; //a variable to store the current year
+var yearExpressedText; //variable to store year expressed text
 //Color array for law data -- just threw in some random colors for now
 var colorArrayLaw      = [ "#f7f7f7",
                            "#d9d9d9",
@@ -252,13 +248,16 @@ function setMap() {
             if(playing == false) { // if the map is currently playing
               timer = setInterval(function(){   // set a JS interval
                 if(yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
+                    console.log("if in animate map");
                     yearExpressed--;  // increment the current attribute counter
                     changeAttribute(yearExpressed, colorize);
+
                 } else {
+                    console.log("else in animate map");
                     currentAttribute = 0;  // or reset it to zero
                 }
                 d3.select('#clock').html(yearExpressed);  // update the clock
-              }, 100);
+              }, 1000);
 
               d3.select(this).html('stop');  // change the button label to stop
               playing = true;   // change the status of the animation
@@ -398,13 +397,13 @@ function setMap() {
                     return d + 30;
                 });
 
-         //creates menuBoxes
-        menuInfoBox = d3.select(".menu-info")
-            .append("div")
-            .attr("width", menuInfoWidth)
-            .attr("height", menuInfoHeight)
-            .attr("class", "menuInfoBox textBox")
-            .html(infotext + infolink);
+        //  //creates menuBoxes
+        // menuInfoBox = d3.select(".menu-info")
+        //     .append("div")
+        //     .attr("width", menuInfoWidth)
+        //     .attr("height", menuInfoHeight)
+        //     .attr("class", "menuInfoBox textBox")
+        //     .html(infotext + infolink);
     }; //end createMenu
 
     //creates the menu items
@@ -461,20 +460,13 @@ function setMap() {
                     return arrayX[i]
                 }
             })
-            .style({'font-size': '14px', 'font-family': 'Open Sans, sans-serif'});
+            .style({'font-size': '14px', 'font-family': 'Arial', 'color': 'white'});
 
             menuLabels.data(yArray)
                 .attr("y", function(d, i){
                     return d + 30;
                 });
 
-         //creates menuBoxes
-        menuInfoBox = d3.select(".menu-info")
-            .append("div")
-            .attr("width", menuInfoWidth)
-            .attr("height", menuInfoHeight)
-            .attr("class", "menuInfoBox textBox")
-            .html(infotext + infolink);
     }; //end createMenu
 
 
