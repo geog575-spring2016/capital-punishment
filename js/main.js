@@ -13,6 +13,7 @@
 var arrayLaw = [ "Legal","Not","Moratorium", "Formal Hold", "De Facto Moratorium"]; 
 //array for years
 var yearArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016"];
+var executeYR = ["Y1977", "Y1978", "Y1979", "Y1980", "Y1981", "Y1982", "Y1983", "Y1984", "Y1985", "Y1986", "Y1987", "Y1988", "Y1989", "Y1990", "Y1991", "Y1992", "Y1993", "Y1994", "Y1995", "Y1996", "Y1997", "Y1998", "Y1999", "Y2000", "Y2001", "Y2002", "Y2003", "Y2004", "Y2005", "Y2006", "Y2007", "Y2008", "Y2009", "Y2010", "Y2011", "Y2012", "Y2013", "Y2014", "Y2015"];
 //deleted other arrays for later because we are focusing on law/total # of executions
 //if time, go back to earlier commits and grab old arrays for race, method, etc.
 
