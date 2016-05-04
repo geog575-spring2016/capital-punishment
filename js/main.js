@@ -334,40 +334,38 @@ function drawMenu(){
             .style({'font-size':'36px', 'font-weight': 'strong'});
     }; //done with drawMenuInfo
 
-//vcr controls click events
-function animateMap(yearExpressed, colorize, yearExpressedText){
-    //step backward functionality
-    $(".stepBackward").click(function(){
-        if (yearExpressed <= keyArray[keyArray.length-1] && yearExpressed > keyArray[0]){
-            yearExpressed--;
-            changeAttribute(yearExpressed, colorize);
-        } else {
-            yearExpressed = keyArray[keyArray.length-1];
-            changeAttribute(yearExpressed, colorize);
-        }; 
-    });
-    //play functionality
-    $(".play").click(function(){
-        timer.play();
-        $('.play').prop('disabled', true);
-    });
-    //pause functionality
-    $(".pause").click(function(){
-        timer.pause();
-        $('.play').prop('disabled', false);
-        changeAttribute(yearExpressed, colorize);
-    });
-    //step forward functionality
-    $(".stepForward").click(function(){
-        if (yearExpressed < keyArray[keyArray.length-1]){
-            yearExpressed++;
-            changeAttribute(yearExpressed, colorize);
-        } else {
-            yearExpressed = keyArray[0];
-            changeAttribute(yearExpressed, colorize);
-        }; 
-    });
-}; //end AnimateMAP
+    //controls click events
+    function animateMap(yearExpressed, colorize, yearExpressedText){
+
+
+        var timer;  // create timer object
+        d3.select('#play')
+          .on('click', function() {  // when user clicks the play button
+            if(playing == false) { // if the map is currently playing
+              timer = setInterval(function(){   // set a JS interval
+                if(yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
+                    console.log("if in animate map");
+                    yearExpressed--;  // increment the current attribute counter
+                    changeAttribute(yearExpressed, colorize);
+
+                } else {
+                    console.log("else in animate map");
+                    currentAttribute = 0;  // or reset it to zero
+                }
+                d3.select('#clock').html(yearExpressed);  // update the clock
+              }, 1000);
+
+              d3.select(this).html('stop');  // change the button label to stop
+              playing = true;   // change the status of the animation
+            } else {    // else if is currently playing
+              clearInterval(timer);   // stop the animation by clearing the interval
+              d3.select(this).html('play');   // change the button label to play
+              playing = false;   // change the status again
+            }
+
+        });
+      }
+
 
 //for play functionality
 function timeMapSequence(yearsExpressed) {
