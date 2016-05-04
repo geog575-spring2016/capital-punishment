@@ -66,25 +66,6 @@ h4 {
 }*/
 /*code is from http://bl.ocks.org/rgdonohue/9280446*/
 
-
-#play, #clock {
-  position: absolute;
-  top: 15px;
-}
-#play {
-  left: 15px;
-  background: grey;
-  border: none;
-  font-size: 30px;
-  color: white;
-}
-
-#clock {
-  left: 100px;
-  color: grey;
-  font-size: 30px;
-}
-
 /*robin's code*/
 
 /*  navbar CSS */
@@ -161,10 +142,7 @@ h4 {
 }
 
 .menu-inset {
-    float: right;
-    border-style: solid;
-    border-width: 2px;
-    border-color: #CCCCCC;
+    float: left;
 }
 
 
@@ -217,14 +195,13 @@ h4 {
     position: absolute;
 }
 
-.sequence-buttons {
-
-}
-
 .button {
-    padding-right: 15%;
+    padding-right: 0%;
     display: inline-flex;
     float: right;
+    background: none;
+    color: #800000;
+
 }
 .dropdown {
     margin-top: 6%;

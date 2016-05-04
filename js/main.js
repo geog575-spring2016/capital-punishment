@@ -79,18 +79,11 @@ var projection;
 //when window loads, initiate map
 window.onload = initialize();
 
-// //jquery function changes active state of navbar
-// $(function(){
-//     $('.nav li a').on('click', function(e){
-//         var $thisLi = $(this).parent('li');
-//         var $ul = $thisLi.parent('ul');
-
-//         if (!$thisLi.hasClass('active')){
-//             $ul.find('li.active').removeClass('active');
-//                 $thisLi.addClass('active');
-//         }
-//     })
-// });//end navbar function
+    //disables buttons on load
+    $('.stepBackward').prop('disabled', true);
+    $('.play').prop('disabled', true);
+    $('.pause').prop('disabled', true);
+    $('.stepForward').prop('disabled', true);
 
 function initialize(){
   expressed = topicArray[0];
@@ -208,9 +201,7 @@ function joinData(topojson, csvData, attribute, json){
             };
         };
      };
-
-    console.log("made it to d3.select clock");
-    d3.select('#clock').html(yearArray[yearExpressed]); 
+    d3.select('#play').html(yearArray[yearExpressed]); 
 
 };
 
@@ -343,37 +334,48 @@ function drawMenu(){
             .style({'font-size':'36px', 'font-weight': 'strong'});
     }; //done with drawMenuInfo
 
-    //controls click events
-    function animateMap(yearExpressed, colorize, yearExpressedText){
+//vcr controls click events
+function animateMap(yearExpressed, colorize, yearExpressedText){
+    //step backward functionality
+    $(".stepBackward").click(function(){
+        if (yearExpressed <= keyArray[keyArray.length-1] && yearExpressed > keyArray[0]){
+            yearExpressed--;
+            changeAttribute(yearExpressed, colorize);
+        } else {
+            yearExpressed = keyArray[keyArray.length-1];
+            changeAttribute(yearExpressed, colorize);
+        }; 
+    });
+    //play functionality
+    $(".play").click(function(){
+        timer.play();
+        $('.play').prop('disabled', true);
+    });
+    //pause functionality
+    $(".pause").click(function(){
+        timer.pause();
+        $('.play').prop('disabled', false);
+        changeAttribute(yearExpressed, colorize);
+    });
+    //step forward functionality
+    $(".stepForward").click(function(){
+        if (yearExpressed < keyArray[keyArray.length-1]){
+            yearExpressed++;
+            changeAttribute(yearExpressed, colorize);
+        } else {
+            yearExpressed = keyArray[0];
+            changeAttribute(yearExpressed, colorize);
+        }; 
+    });
+}; //end AnimateMAP
 
-
-        var timer;  // create timer object
-        d3.select('#play')
-          .on('click', function() {  // when user clicks the play button
-            if(playing == false) { // if the map is currently playing
-              timer = setInterval(function(){   // set a JS interval
-                if(yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
-                    console.log("if in animate map");
-                    yearExpressed--;  // increment the current attribute counter
-                    changeAttribute(yearExpressed, colorize);
-
-                } else {
-                    console.log("else in animate map");
-                    currentAttribute = 0;  // or reset it to zero
-                }
-                d3.select('#clock').html(yearExpressed);  // update the clock
-              }, 1000);
-
-              d3.select(this).html('stop');  // change the button label to stop
-              playing = true;   // change the status of the animation
-            } else {    // else if is currently playing
-              clearInterval(timer);   // stop the animation by clearing the interval
-              d3.select(this).html('play');   // change the button label to play
-              playing = false;   // change the status again
-            }
-
-        });
-      }
+//for play functionality
+function timeMapSequence(yearsExpressed) {
+    changeAttribute(yearExpressed, colorize);
+    if (yearsExpressed < keyArray[keyArray.length-1]){
+        yearExpressed++; 
+    };
+}; //end timeMapSequence
 
 
     //iterate over the years
@@ -889,3 +891,14 @@ function moveLabel(){
 
     d3.select(".retrievelabel")
 };
+
+
+// jQuery timer for play/pause
+var timer = $.timer(function() {
+        if (yearExpressed == keyArray[keyArray.length-1]){
+            yearExpressed = keyArray[0];
+        };
+        animateMap(yearExpressed, colorize, yearExpressedText);
+        timeMapSequence(yearExpressed);  
+    });
+timer.set({ time : 800, autostart : false });
