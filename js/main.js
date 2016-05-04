@@ -109,6 +109,7 @@ function setMap() {
         .defer(d3.csv, "../data/Law.csv") //laws by year
         .defer(d3.csv,"../data/allExecutions.csv") //executions by year
         .defer(d3.json, "../data/continentalUS.topojson") //geometries
+        .defer(d3.json, "../data/allExecutions.geojson") //geometries
         .await(callback);
         //call the function to create the menu, law choropleth as default on load
         drawMenu();
