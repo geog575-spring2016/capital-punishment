@@ -32,6 +32,9 @@ var arrayLaw = [ "Legal",
 //array for year"s
 var yearArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995","1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"];
 
+// NOTE: special array for the updated dataset that links to proportional symbols
+var executeYR = ["Y1977", "Y1978", "Y1979", "Y1980", "Y1981", "Y1982", "Y1983", "Y1984", "Y1985", "Y1986", "Y1987", "Y1988", "Y1989", "Y1990", "Y1991", "Y1992", "Y1993", "Y1994", "Y1995", "Y1996", "Y1997", "Y1998", "Y1999", "Y2000", "Y2001", "Y2002", "Y2003", "Y2004", "Y2005", "Y2006", "Y2007", "Y2008", "Y2009", "Y2010", "Y2011", "Y2012", "Y2013", "Y2014", "Y2015"];
+
 //choropleth global variables
 var currentColors = []; //empty array to fill with corresponding colors
 var currentArray = []; //empty array to fill with the current topic
@@ -39,7 +42,22 @@ var expressed; //
 var scale; //
 var colorize; //
 var playing = false; //default to not play on load
-var yearExpressed; //a variable to store the current year
+
+// proportional symbol global variables
+var currentYR = 20;
+
+/* **************************************************************
+
+NOTE * NOTE * NOTE * NOTE * NOTE * NOTE * NOTE * NOTE * NOTE * NOTE
+
+This variable is key and controls all values later on throughout
+// special attention here
+
+************************************************************** */
+var dataEXP = executeYR[20];
+
+
+
 var yearExpressedText; //variable to store year expressed text
 //Color array for law data -- just threw in some random colors for now
 var colorArrayLaw      = [ "#f7f7f7",
@@ -111,7 +129,7 @@ function setMap() {
     d3_queue.queue()
     //queue funcion loads external data asynchronously
         .defer(d3.csv, "../data/Law.csv") //laws by year
-        .defer(d3.csv,"../data/allExecutions.csv") //executions by year
+        .defer(d3.csv,"../data/allExecutions_up.csv") //executions by year
         .defer(d3.json, "../data/continentalUS.topojson") //geometries
         .defer(d3.json, "../data/allExecutions.geojson") //geometries
         .await(callback);
@@ -121,7 +139,7 @@ function setMap() {
 //retrieve and process json file and data, same order as the queue function to load data
 //accepts errors from queue function as first argument
 
-function callback(error, Law, allExecutions, continentalUS){
+function callback(error, Law, allExecutions, continentalUS, ex){
     
     //variable to store the continentalUS json with all attribute data
     joinedJson = topojson.feature(continentalUS,
@@ -146,7 +164,7 @@ function callback(error, Law, allExecutions, continentalUS){
 
     implementState (csvArray[csv], joinedJson);
 
-    setSymbols(path, map, csvArray, projection);
+    setSymbols(path, map, allExecutions, projection);
 
     //call the function to create the menu, law choropleth as default on load
     drawMenu();
@@ -228,7 +246,7 @@ function implementState(csvData, json) {
 function setSymbols (path, map, data, projection){
 
      var circles = map.selectAll(".circles")
-        .data(data[1])
+        .data(data)
         .enter()
         .append("circle")
         .attr("class", function(d){
@@ -241,14 +259,46 @@ function setSymbols (path, map, data, projection){
 
     console.log("Test3");
 
+    console.log(dataEXP);
+
     // console.log(data[state][0]);
 
 
-    newPropSymb(circles,data);
-
+    newPropSymb(circles, data);
 
 };
 
+function newPropSymb(circles, data) {
+
+    // create array to store all values for 
+    var domainArray = [];
+
+    for (var i=0; i<data.length; i++) {
+
+        var val = parseFloat(data[i][dataEXP]);
+
+        console.log(val);
+
+        domainArray.push(val);
+    };
+
+
+    console.log(domainArray);
+
+        var radiusMin = Math.min.apply(Math, domainArray);
+        var radiusMax = Math.max.apply(Math, domainArray);
+
+    console.log(radiusMax);
+
+    var setRadius = d3.scale.sqrt()
+        .range([0, 40])
+        .domain([radiusMin, radiusMax]);
+
+    //create a second svg element to hold the bar chart
+    var circleRadius= circles.attr("r", function(d){
+            return setRadius(d[dataEXP]);
+        });
+};
 
 //for our menu, which will include law, overlay of total executions
 function drawMenu(){
@@ -272,7 +322,7 @@ function drawMenu(){
                     return choropleth(d, colorize);
             });
         createMenu(arrayOverview, colorArrayOverview, "Legal Status: ");
-        $(".Legal").css({'background-color': '#fff','color': '#333333'});
+        $(".Legal").css({'background-color': '#CCCCCC','color': '#333333'});
         //removes chart
         var oldChart = d3.selectAll(".chart").remove();
         var oldRects = d3.selectAll(".chartRect").remove();
