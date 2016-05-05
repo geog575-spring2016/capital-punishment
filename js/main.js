@@ -79,12 +79,6 @@ var projection;
 //when window loads, initiate map
 window.onload = initialize();
 
-    //disables buttons on load
-    $('.stepBackward').prop('disabled', true);
-    $('.play').prop('disabled', true);
-    $('.pause').prop('disabled', true);
-    $('.stepForward').prop('disabled', true);
-
 function initialize(){
   expressed = topicArray[0];
   yearExpressed = yearArray[yearArray.length-1];
@@ -93,13 +87,6 @@ function initialize(){
     //call setmap to set up the map
     setMap();
     createMenu(arrayLaw, colorArrayLaw);
-
-    $(".Legal").css({'background-color': '#CCCCCC','color': '#333333'});
-//this disables the buttons on load
-$('.stepBackward').prop('disabled', true);
-$('.play').prop('disabled', true);
-$('.pause').prop('disabled', true);
-$('.stepForward').prop('disabled', true);
 }; // initialize OUT *mic drop*
 
 //set up the choropleth
@@ -300,10 +287,6 @@ function drawMenu(){
         yearExpressed = yearArray[yearArray.length-1];
         d3.selectAll(".yearExpressedText").remove();
         drawMenuInfo(colorize, yearExpressed);
-        $('.stepBackward').prop('disabled', true);
-        $('.play').prop('disabled', true);
-        $('.pause').prop('disabled', true);
-        $('.stepForward').prop('disabled', true);
         d3.selectAll(".menu-options div").style({'background-color': '#e1e1e1','color': '#969696'});
         d3.selectAll(".states").style("fill", function(d){
                 return choropleth(d, colorize);
