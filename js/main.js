@@ -56,10 +56,10 @@ var dataEXP = executeYR[20];
 var yearExpressedText; //variable to store year expressed text
 //array for law variable
 var arrayLaw = [ "Legal",
-                  "Illegal",
                   "Moratorium",
+                    "De Facto Moratorium",
                   "Formal Hold",
-                  "De Facto Moratorium"];
+                   "Illegal"];
 var colorArrayLaw      = [ "#b30000", "#e34a33", "#fc8d59", "#fdcc8a", "#fef0d9"
 ];
 //the map width is a function of window size
@@ -222,8 +222,8 @@ function setSymbols (path, map, data, projection){
         .append("circle")
         .attr("class", function(d){
             return "circles " + d.state; })
-        .attr("fill", "#990909")
-        .attr('fill-opacity', 0.5)
+        .attr("fill", "grey")
+        .attr('fill-opacity',0.75)
         .attr("cx", function(d) {
             return projection([d.Longitude, d.Latitude])[0]; })
         .attr("cy", function(d) { return projection([d.Longitude, d.Latitude])[1]; });
@@ -299,7 +299,7 @@ function newPropSymb(circles, data) {
                     currentAttribute = 0;  // or reset it to zero
                 }
                 d3.select('#clock').html(yearExpressed);  // update the clock
-              }, 1000);
+              }, 700);
 
               d3.select(this).html('stop');  // change the button label to stop
               playing = true;   // change the status of the animation
