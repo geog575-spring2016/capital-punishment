@@ -308,11 +308,9 @@ function drawMenu(){
     function drawMenuInfo(colorize, yearExpressed){
       console.log("made it to drawmenuinfo");
         //creates year for map menu
-        yearExpressedText = d3.select(".menu-info")
-            .append("text")
+        yearExpressedText = d3.select('#clock')
             .attr("x", 0)
             .attr("y", 0)
-            .attr("class", "yearExpressedText menu-info")
             .text(yearExpressed)
             .style({'font-size':'36px', 'font-weight': 'strong'});
     }; //done with drawMenuInfo

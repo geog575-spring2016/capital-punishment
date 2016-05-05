@@ -21,14 +21,6 @@ h4 {
     stroke-width: 0.5px;
 }
 
-/*.retrievelabel {
-    margin: 0 10px 0 0;
-    padding: 0;
-    display: inline-block;
-    line-height: 1em;
-    float: right;
-}
-*/
 
 .labelTitle {
    font-family: Arial;
@@ -49,23 +41,6 @@ h4 {
 }
 
 
-/*.menuInfoBox {
-    font-size: 14px;
-    font-family: Arial;
-}*/
-
-/*.textBox {
-    width: 20%;
-    float: right;
-}*/
-
-/*.yearExpressedText {
-    float: right;
-    padding-right: 0px;
-    font-family: Arial;
-}*/
-/*code is from http://bl.ocks.org/rgdonohue/9280446*/
-
 /*robin's code*/
 
 .jumbotron {
@@ -81,10 +56,6 @@ h4 {
     margin-top: 0px;
     height: 10%;
 }
-
-
-/*  Menu CSS */
-/*  ------ */
 .main-menu { 
     position: absolute;
     margin-left: 0% !important;
@@ -100,6 +71,8 @@ h4 {
 
 .menu-inset {
     float: left;
+    font-color: white;
+    color: white;
 }
 
 
