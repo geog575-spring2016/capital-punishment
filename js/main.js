@@ -20,6 +20,16 @@
 //8) update the timeline visualization
 //9) eventually update the prop symbols too :)
 
+
+//NOTES FROM PRESENTATION
+//1) let's clarify what we want to communicate with this map. are we pro, against, or attempting to be unbiased?
+//2) once we clarify our stance, let's decide on a color scheme. think about what is rising to figure! 
+//3) play/forward buttons are confusing, let's use visual affordances rather than words (or are words ok to keep?)
+/////and we need to figure out to have only a play button at load, then forward/back when the map is in motion
+//4) a reset/home button?
+//5) why didn't our map appear? figure out what's going on with how it's showing up in different browsers. 
+////firefox works for kai, chrome works for me
+
 //****GLOBAL VARIABLES****//
 var topicArray = ["Law",
                   "allExecutions"]; //the first item in this array will be the default
