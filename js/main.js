@@ -60,11 +60,12 @@ var dataEXP = executeYR[20];
 
 var yearExpressedText; //variable to store year expressed text
 //Color array for law data -- just threw in some random colors for now
-var colorArrayLaw      = [ "#f7f7f7",
-                           "#d9d9d9",
-                           "#bdbdbd",
-                           "#969696",
-                           "#636363"];
+var colorArrayLaw      = [ "#E24444",
+"#CB1D1D",
+"#A50B0B",
+"#7D0000",
+                            "#FF7373",
+                           ];
 //the map width is a function of window size
 var mapWidth = window.innerWidth * 0.7,
 mapHeight = 600;
@@ -81,7 +82,7 @@ window.onload = initialize();
 
 function initialize(){
   expressed = topicArray[0];
-  yearExpressed = yearArray[yearArray.length-1];
+  yearExpressed = yearArray[0];
   //call function to animate the map to iterate over the years
    animateMap(yearExpressed, colorize, yearExpressedText);
     //call setmap to set up the map
@@ -324,11 +325,10 @@ function drawMenu(){
           .on('click', function() {  // when user clicks the play button
             if(playing == false) { // if the map is currently playing
               timer = setInterval(function(){   // set a JS interval
-                if(yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
-                    console.log("if in animate map");
-                    yearExpressed--;  // increment the current attribute counter
+                if(yearExpressed = 2015){
+                    yearExpressed = 1976,
+                    yearExpressed++;  // increment the current attribute counter
                     changeAttribute(yearExpressed, colorize);
-
                 } else {
                     console.log("else in animate map");
                     currentAttribute = 0;  // or reset it to zero
@@ -341,6 +341,32 @@ function drawMenu(){
             } else {    // else if is currently playing
               clearInterval(timer);   // stop the animation by clearing the interval
               d3.select(this).html('play');   // change the button label to play
+              playing = false;   // change the status again
+            }
+
+        });
+
+
+        var forwardbacktimer;  // create timer object
+        d3.select('#forward')
+          .on('click', function() {  // when user clicks the play button
+            if(playing == false) { // if the map is currently playing
+              timer = setInterval(function(){   // set a JS interval
+                if(yearExpressed < 2015){
+                    yearExpressed++;  // increment the current attribute counter
+                    changeAttribute(yearExpressed, colorize);
+                } else {
+                    console.log("else in animate map");
+                    currentAttribute = 0;  // or reset it to zero
+                }
+                d3.select('#clock').html(yearExpressed);  // update the clock
+              }, 1000);
+
+              d3.select(this).html('back');  // change the button label to stop
+              playing = true;   // change the status of the animation
+            } else {    // else if is currently playing
+              clearInterval(timer);   // stop the animation by clearing the interval
+              d3.select(this).html('forward');   // change the button label to play
               playing = false;   // change the status again
             }
 
@@ -427,6 +453,8 @@ function timeMapSequence(yearsExpressed) {
         var yArray = [40, 85, 130, 175, 220, 265];
         var oldItems = d3.selectAll(".menuBox").remove();
         var oldItems2 = d3.selectAll(".menuInfoBox").remove();
+
+        var title = "Legal Status:";
 
         //creates menu boxes
         menuBox = d3.select(".menu-inset")

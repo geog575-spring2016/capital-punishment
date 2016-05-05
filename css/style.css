@@ -5,49 +5,39 @@
     margin: 0px;
     padding: 0px;
     top: 0px;
+    margin-left: 15%;
 }
 
-.map {
-  background-color: none;
-}
-
-h4 {
-  size: 14pt;
-  color: grey;
-}
 
 .states {
     stroke: white;
     stroke-width: 0.5px;
 }
 
-
-.labelTitle {
-   font-family: Arial;
-   font-weight:bold;
-   font-size:20px;
-   line-height:24px;
-   background-color: black;
-   color:grey;
-   width:200px;
-   float: left;
-   padding: 3px;
+#play, #clock {
+  position: absolute;
+  top: 0px;
+}
+#play {
+  left: 15px;
+  background: grey;
+  border: none;
+  font-size: 30px;
+  color: white;
 }
 
-.labelAttribute {
-    font-family: Arial;
-    font-size:16px;
-    line-height: 20px;
+#clock {
+  left: 100px;
+  color: grey;
+  font-size: 30px;
 }
 
-
-/*robin's code*/
 
 .jumbotron {
     padding: 200px;
     padding-left: 60px;
     padding-right: 60px;
-    color: #f9f9f9; 
+    color: #f9f9f9;
     background-color:  #986cb3;
 }
 
@@ -56,10 +46,14 @@ h4 {
     margin-top: 0px;
     height: 10%;
 }
-.main-menu { 
+
+.main-menu {
     position: absolute;
-    margin-left: 0% !important;
+    margin-left: -10% !important;
     color: #969696;
+    background-color: white;
+    width: 200px;
+    height: 315px;
 }
 
 .menu-options {
@@ -67,12 +61,6 @@ h4 {
     background-color:  #e1e1e1;
     cursor: pointer;
     font-family: Open Sans, sans-serif;
-}
-
-.menu-inset {
-    float: left;
-    font-color: white;
-    color: white;
 }
 
 
@@ -91,30 +79,33 @@ h4 {
     padding: 2%;
 }
 
-
 .title {
     font-family: 'Roboto Slab', sans-serif;
 }
 
-/*  Map Info CSS (includes section info, play, pause, dropdown) */
-/*  ------ */
-.menuInfoBox {
-    margin-left: 29%;
-    font-size: 14px;
-    font-family: Open Sans, sans-serif;
-}
-
-.textBox {
+/*.menuBox {
     width: 50%;
     float: left;
-    padding-bottom: 2%;
-}
+    padding-bottom: 1%;
+    margin-bottom: 100%;
+    background: none;
+}*/
 
 .yearExpressedText {
-    float: right; 
+    float: right;
     padding-right: 115px;
     font-family: 'Roboto Slab', sans-serif;
+    top: 10px;
+
 }
+
+.menu-inset {
+    float: right;
+    border-style: solid;
+    border-width: 2px;
+    border color: none;
+}
+
 .states {
     fill: #808080;
     stroke: #fff;
@@ -155,50 +146,3 @@ h4 {
     line-height: 20px;
 }
 
-
-#executions{
-    padding-top: 10px;
-}
-
-p {
-    font-size: 16px;
-    font-family: 'Open Sans', sans-serif;
-}
-
-h1 {
-    font-size: 36px;
-    font-family: 'Roboto Slab', serif;
-}
-
-h2 {
-    
-    font-family: 'Roboto Slab', serif;
-}
-
-h3 {
-    font-family: 'Roboto Slab', serif;
-}
-
-body { 
-    padding-top: 50px; 
-}
-
-a:link {
-    color: #37c4ab;
-    text-decoration: none;
-}
-
-a:visited {
-    color: #37c4ab;
-    text-decoration: none;
-}
-
-a:hover {
-    color: #248271;
-    text-decoration: underline;
-}
-
-a:active {
-    color: #37c4ab;
-    text-decoration: none;
-}
