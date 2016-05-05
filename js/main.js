@@ -42,17 +42,25 @@ var playing = false; //default to not play on load
 var yearExpressed; //a variable to store the current year
 var yearExpressedText; //variable to store year expressed text
 //Color array for law data -- just threw in some random colors for now
-var colorArrayLaw      = [ "#f7f7f7",
-                           "#d9d9d9",
-                           "#bdbdbd",
-                           "#969696",
-                           "#636363"];
+var colorArrayLaw      = [ "#FF7373",
+                           "#E24444",
+                           "#CB1D1D",
+                           "#A50B0B",
+                           "#7D0000"];
 //the map width is a function of window size
 var mapWidth = window.innerWidth * 0.7,
 mapHeight = 600;
 var menuWidth = 200, menuHeight = 300;
 var menuInfoWidth = 250, menuInfoHeight = 100;
 var joinedJson;
+
+
+var chartHeight = 200;
+var chartWidth = 882;
+var margin = {top: 80, right: 20, bottom: 30, left:10};
+var squareWidth = 18;
+var squareHeight = 18;
+
 
 //when window loads, initiate map
 window.onload = initialize();
@@ -78,7 +86,7 @@ function initialize(){
     //call setmap to set up the map
     setMap();
     createMenu(arrayLaw, colorArrayLaw);
-
+  //  setChart(yearExpressed);
     $(".Legal").css({'background-color': '#CCCCCC','color': '#333333'});
 //this disables the buttons on load
 $('.stepBackward').prop('disabled', true);
@@ -148,7 +156,7 @@ function setMap() {
                           //console.log(jsonStates[a].properties.abrev == csvLink);
                             //attrObj holds all the attributes. so... many... informations
                             attrObj = {};
-                            //loop to assign key/value pairs to json object
+                            //loop to assign year/value pairs to json object
                             for(var year in yearArray){
                               //console.log(yearArray);
                             //attr variable holds all years as separate objects
@@ -165,7 +173,7 @@ function setMap() {
                     };
                  };
                  console.log("made it to d3.select clock");
-                   d3.select('#clock').html(yearArray[yearExpressed]); 
+                   d3.select('#clock').html(yearArray[yearExpressed]);
             };
             //style states according to the data
             var states = map.selectAll(".states")
@@ -217,7 +225,7 @@ function setMap() {
                     .text(function(d) {
                         return choropleth(d, colorize);
                 });
-            createMenu(arrayOverview, colorArrayOverview, "Legal Status: ");
+            createMenu(arrayOverview, colorArrayOverview);
             $(".Legal").css({'background-color': '#CCCCCC','color': '#333333'});
             //removes chart
             var oldChart = d3.selectAll(".chart").remove();
@@ -336,82 +344,14 @@ function setMap() {
 
 
 
-    //creates the menu items
-    function createMenu(arrayX, arrayY, title, infotext, infolink){
-      console.log("made it to createmenu");
-        var yArray = [40, 85, 130, 175, 220, 265];
-        var oldItems = d3.selectAll(".menuBox").remove();
-        var oldItems2 = d3.selectAll(".menuInfoBox").remove();
-
-        //creates menu boxes
-        menuBox = d3.select(".menu-inset")
-                .append("svg")
-                .attr("width", menuWidth)
-                .attr("height", menuHeight)
-                .attr("class", "menuBox");
-
-        //creates Menu Title
-        var menuTitle = menuBox.append("text")
-            .attr("x", 10)
-            .attr("y", 30)
-            .attr("class","title")
-            .text(title)
-            .style("font-size", '16px');
-
-        //draws and shades boxes for menu
-        for (b = 0; b < arrayX.length; b++){
-           var menuItems = menuBox.selectAll(".items")
-                .data(arrayX)
-                .enter()
-                .append("rect")
-                .attr("class", "items")
-                .attr("width", 35)
-                .attr("height", 35)
-                .attr("x", 15);
-
-            menuItems.data(yArray)
-                .attr("y", function(d, i){
-                    return d;
-                });
-
-            menuItems.data(arrayY)
-                .attr("fill", function(d, i){
-                    return arrayY[i];
-                });
-        };
-        //creates menulabels
-        var menuLabels = menuBox.selectAll(".menuLabels")
-            .data(arrayX)
-            .enter()
-            .append("text")
-            .attr("class", "menuLabels")
-            .attr("x", 60)
-            .text(function(d, i){
-                for (var c = 0; c < arrayX.length; c++){
-                    return arrayX[i]
-                }
-            })
-            .style({'font-size': '14px', 'font-family': 'Open Sans, sans-serif'});
-
-            menuLabels.data(yArray)
-                .attr("y", function(d, i){
-                    return d + 30;
-                });
-
-        //  //creates menuBoxes
-        // menuInfoBox = d3.select(".menu-info")
-        //     .append("div")
-        //     .attr("width", menuInfoWidth)
-        //     .attr("height", menuInfoHeight)
-        //     .attr("class", "menuInfoBox textBox")
-        //     .html(infotext + infolink);
-    }; //end createMenu
 
     //creates the menu items
     function createMenu(arrayX, arrayY, title, infotext, infolink){
         var yArray = [40, 85, 130, 175, 220, 265];
         var oldItems = d3.selectAll(".menuBox").remove();
         var oldItems2 = d3.selectAll(".menuInfoBox").remove();
+        var title = "Legal Status: "
+
 
         //creates menuBoxes
         menuBox = d3.select(".menu-inset")
@@ -523,150 +463,150 @@ function choroplethChart(d, colorize) {
 };
 
 
-//sets up the chart
-function setChart(yearExpressed) {
-  console.log("made it to setchart");
-    // reset the timelineFeatureArray each time setChart is called
-    timelineFeatureArray = []; //this will hold the new feature objects that will include a value for which year a law changed
-    //initial setup of chart
-    var chart = d3.select(".graph")
-        .append("svg")
-        .attr("width", chartWidth+"px")
-        .attr("height", chartHeight+"px")
-        .attr("class", "chart");
-
-    //put all rects in a g element
-    var squareContainer = chart.append("g")
-        .attr("transform", "translate(" + margin.left + ', ' + margin.top + ')');
-
-    //for-loop creates an array of feature objects that stores three values: thisYear (for the year that a law was implemented), newLaw (the categorization of the new policy) and a feature object (the state that the law changed in)
-    for (var feature in joinedJson) {
-        var featureObject = joinedJson[feature];
-        for (var thisYear = 1; thisYear<=keyArray.length-1; thisYear++){
-            var lastYear = thisYear - 1;
-            if (featureObject.properties[expressed][keyArray[thisYear]] != featureObject.properties[expressed][keyArray[lastYear]]) { //have to account for the value not being undefined since the grade data is part of the linked data, and that's not relevant for the timeline
-                timelineFeatureArray.push({yearChanged: Number(keyArray[thisYear]), newLaw: featureObject.properties[expressed][keyArray[thisYear]], feature: featureObject}); //each time a law is passed in a given year, a new feature object is pushed to the timelineFeatureArray
-            };
-        };
-    };
-    var yearObjectArray = []; //will hold a count for how many features should be drawn for each year, the following for-loop does that
-
-    //for-loop determines how many rects will be drawn for each year
-    for (key in keyArray) {
-        var yearCount = 1;
-        for (i = 0; i < timelineFeatureArray.length; i++) {
-            //loop through here to see which year it matches and up
-            if (timelineFeatureArray[i].yearChanged == keyArray[key]) {
-                //countYears++;
-                yearObjectArray.push({"year": Number(keyArray[key]), "count":yearCount});
-                yearCount = yearCount++;
-            };
-        };
-    };
-
-    //attach data to the rects and start drawing them
-    chartRect = squareContainer.selectAll(".chartRect")
-        .data(timelineFeatureArray) //use data from the timelineFeatureArray, which holds all of the states that had some change in law
-        .enter()
-        .append("rect") //create a rectangle for each state
-        .attr("class", function(d) {
-            return "chartRect " + d.feature.properties.postal;
-        })
-        .attr("width", squareWidth+"px")
-        .attr("height", squareHeight+"px");
-
-    //determine the x-scale for the rects, determing where along the x-axis they will be drawn according to which year the law changed
-    var x = d3.scale.linear()
-        .domain([keyArray[0], keyArray[keyArray.length-1]]) //domain is an array of 2 values: the first and last years in the keyArray (1973 and 2014)
-        .rangeRound([0, chartWidth - margin.left - margin.right]); //range determines the x value of the square; it is an array of 2 values: the furthest left x value and the furthest right x value (on the screen)
-
-    //set a time scale for drawing the axis; use a separate time scale rather than a linear scale for formatting purposes.
-    var timeScale = d3.time.scale()
-        .domain([new Date(keyArray[1]), d3.time.year.offset(new Date(keyArray[keyArray.length-1]), 1)]) //domain is an array of 2 values: the first and last years in the keyArray (1973 and 2014)
-        .rangeRound([0, chartWidth - margin.left - margin.right]); //range determines the x value of the square; it is an array of 2 values: the furthest left x value and the furthest right x value (on the screen)
-
-    //place the rects on the chart
-    var rectStyle = chartRect.attr("transform", function(d) {
-            return "translate(" + x(d.yearChanged) + ")"; //this moves the rect along the x axis according to the scale, depending on the corresponding year that the law changed
-        })
-        //y-value determined by how many rects are being drawn for each year
-        .attr("y", function(d,i) {
-            var yValue = 0;
-            for (i = 0; i < yearObjectArray.length; i++) {
-                if (yearObjectArray[i].year == d.yearChanged) {
-                    yValue = yearObjectArray[i].count*(squareHeight+1);
-                    yearObjectArray[i].count-=1;
-                };
-            };
-            return yValue;
-        })
-        .style("fill", function(d) {
-            return choroplethChart(d.newLaw, colorize); //apply the color according to what the new law is in that year
-        })
-        .on("mouseover", highlightChart)
-        .on("mouseout", dehighlight);
-
-    //save text description of the color applied to each rect to be able to use this for dehighlight
-    rectColor = rectStyle.append("desc")
-            .text(function(d) {
-                return choroplethChart(d.newLaw, colorize);
-            })
-            .attr("class", "rectColor");
-
-    //Creates the axis function
-    var axis = d3.svg.axis()
-        .scale(timeScale)
-        .orient("bottom")
-        .ticks(d3.time.years, 1)
-        .tickFormat(d3.time.format('%y'))
-        .tickPadding(5) //distance between axis line and labels
-        .innerTickSize(50);
-
-    //sets the thickness of the line between the ticks and the corresponding squares in the chart
-    var timelineLine = axis.tickSize(1);
-
-    //sets the margins for the timeline transform
-    var timelineMargin = {top: 50, right: 20, bottom: 30, left:40};
-
-    //draw the timeline as a g element on the chart
-    var timeline = chart.append("g")
-        .attr("height", chartHeight)
-        .attr("width", chartWidth)
-        .attr('transform', 'translate(' + timelineMargin.left + ',' + (chartHeight - timelineMargin.top - timelineMargin.bottom) + ')') //set the starting x,y coordinates for where the axis will be drawn
-        .attr("class", "timeline")
-        .call(axis); //calls the axis function on the timeline
-
-    //adds mouse events
-    timeline.selectAll('g')
-        .each(function(d){
-            d3.select(this)
-             .on("mouseover", function(){
-                 d3.select(this)
-                    .attr("font-weight", "bold")
-                    .attr("cursor", "pointer")
-                    .attr("font-size", "18px")
-                    .attr("stroke", "#986cb3");
-            })
-            .on("mouseout", function(){
-                    d3.select(this)
-                        .attr("font-weight", "normal")
-                        .attr("font-size", "12px")
-                        .attr("stroke", "gray")
-                        .attr("cursor", "pointer");
-            })
-            .on("click", function(){
-                 d3.select(this)
-                    .attr("font-weight", "bold")
-                    .attr("cursor", "pointer")
-                    .attr("font-size", "18px")
-                    .attr("stroke", "#986cb3");
-                var year = d.getFullYear();
-                changeAttribute(year, colorize);
-                animateMap(year, colorize, yearExpressedText);
-            });
-        });
-};
-
+// //sets up the chart
+// function setChart(yearExpressed) {
+//   console.log("made it to setchart");
+//     // reset the timelineFeatureArray each time setChart is called
+//     timelineFeatureArray = []; //this will hold the new feature objects that will include a value for which year a law changed
+//     //initial setup of chart
+//     var chart = d3.select(".graph")
+//         .append("svg")
+//         .attr("width", chartWidth+"px")
+//         .attr("height", chartHeight+"px")
+//         .attr("class", "chart");
+//
+//     //put all rects in a g element
+//     var squareContainer = chart.append("g")
+//         .attr("transform", "translate(" + margin.left + ', ' + margin.top + ')');
+//
+//     //for-loop creates an array of feature objects that stores three values: thisYear (for the year that a law was implemented), newLaw (the categorization of the new policy) and a feature object (the state that the law changed in)
+//     for (var feature in joinedJson) {
+//         var featureObject = joinedJson[feature];
+//         for (var thisYear = 1; thisYear<=yearArray.length-1; thisYear++){
+//             var lastYear = thisYear - 1;
+//             if (featureObject.properties[expressed][yearArray[thisYear]] != featureObject.properties[expressed][yearArray[lastYear]]) { //have to account for the value not being undefined since the grade data is part of the linked data, and that's not relevant for the timeline
+//                 timelineFeatureArray.push({yearChanged: Number(yearArray[thisYear]), newLaw: featureObject.properties[expressed][yearArray[thisYear]], feature: featureObject}); //each time a law is passed in a given year, a new feature object is pushed to the timelineFeatureArray
+//             };
+//         };
+//     };
+//     var yearObjectArray = []; //will hold a count for how many features should be drawn for each year, the following for-loop does that
+//
+//     //for-loop determines how many rects will be drawn for each year
+//     for (year in yearArray) {
+//         var yearCount = 1;
+//         for (i = 0; i < timelineFeatureArray.length; i++) {
+//             //loop through here to see which year it matches and up
+//             if (timelineFeatureArray[i].yearChanged == yearArray[year]) {
+//                 //countYears++;
+//                 yearObjectArray.push({"year": Number(yearArray[year]), "count":yearCount});
+//                 yearCount = yearCount++;
+//             };
+//         };
+//     };
+//
+//     //attach data to the rects and start drawing them
+//     chartRect = squareContainer.selectAll(".chartRect")
+//         .data(timelineFeatureArray) //use data from the timelineFeatureArray, which holds all of the states that had some change in law
+//         .enter()
+//         .append("rect") //create a rectangle for each state
+//         .attr("class", function(d) {
+//             return "chartRect " + d.feature.properties.postal;
+//         })
+//         .attr("width", squareWidth+"px")
+//         .attr("height", squareHeight+"px");
+//
+//     //determine the x-scale for the rects, determing where along the x-axis they will be drawn according to which year the law changed
+//     var x = d3.scale.linear()
+//         .domain([yearArray[0], yearArray[yearArray.length-1]]) //domain is an array of 2 values: the first and last years in the yearArray (1973 and 2014)
+//         .rangeRound([0, chartWidth - margin.left - margin.right]); //range determines the x value of the square; it is an array of 2 values: the furthest left x value and the furthest right x value (on the screen)
+//
+//     //set a time scale for drawing the axis; use a separate time scale rather than a linear scale for formatting purposes.
+//     var timeScale = d3.time.scale()
+//         .domain([new Date(yearArray[1]), d3.time.year.offset(new Date(yearArray[yearArray.length-1]), 1)]) //domain is an array of 2 values: the first and last years in the yearArray (1973 and 2014)
+//         .rangeRound([0, chartWidth - margin.left - margin.right]); //range determines the x value of the square; it is an array of 2 values: the furthest left x value and the furthest right x value (on the screen)
+//
+//     //place the rects on the chart
+//     var rectStyle = chartRect.attr("transform", function(d) {
+//             return "translate(" + x(d.yearChanged) + ")"; //this moves the rect along the x axis according to the scale, depending on the corresponding year that the law changed
+//         })
+//         //y-value determined by how many rects are being drawn for each year
+//         .attr("y", function(d,i) {
+//             var yValue = 0;
+//             for (i = 0; i < yearObjectArray.length; i++) {
+//                 if (yearObjectArray[i].year == d.yearChanged) {
+//                     yValue = yearObjectArray[i].count*(squareHeight+1);
+//                     yearObjectArray[i].count-=1;
+//                 };
+//             };
+//             return yValue;
+//         })
+//         .style("fill", function(d) {
+//             return choroplethChart(d.newLaw, colorize); //apply the color according to what the new law is in that year
+//         })
+//         .on("mouseover", highlightChart)
+//         .on("mouseout", dehighlight);
+//
+//     //save text description of the color applied to each rect to be able to use this for dehighlight
+//     rectColor = rectStyle.append("desc")
+//             .text(function(d) {
+//                 return choroplethChart(d.newLaw, colorize);
+//             })
+//             .attr("class", "rectColor");
+//
+//     //Creates the axis function
+//     var axis = d3.svg.axis()
+//         .scale(timeScale)
+//         .orient("bottom")
+//         .ticks(d3.time.years, 1)
+//         .tickFormat(d3.time.format('%y'))
+//         .tickPadding(5) //distance between axis line and labels
+//         .innerTickSize(50);
+//
+//     //sets the thickness of the line between the ticks and the corresponding squares in the chart
+//     var timelineLine = axis.tickSize(1);
+//
+//     //sets the margins for the timeline transform
+//     var timelineMargin = {top: 50, right: 20, bottom: 30, left:40};
+//
+//     //draw the timeline as a g element on the chart
+//     var timeline = chart.append("g")
+//         .attr("height", chartHeight)
+//         .attr("width", chartWidth)
+//         .attr('transform', 'translate(' + timelineMargin.left + ',' + (chartHeight - timelineMargin.top - timelineMargin.bottom) + ')') //set the starting x,y coordinates for where the axis will be drawn
+//         .attr("class", "timeline")
+//         .call(axis); //calls the axis function on the timeline
+//
+//     //adds mouse events
+//     timeline.selectAll('g')
+//         .each(function(d){
+//             d3.select(this)
+//              .on("mouseover", function(){
+//                  d3.select(this)
+//                     .attr("font-weight", "bold")
+//                     .attr("cursor", "pointer")
+//                     .attr("font-size", "18px")
+//                     .attr("stroke", "#986cb3");
+//             })
+//             .on("mouseout", function(){
+//                     d3.select(this)
+//                         .attr("font-weight", "normal")
+//                         .attr("font-size", "12px")
+//                         .attr("stroke", "gray")
+//                         .attr("cursor", "pointer");
+//             })
+//             .on("click", function(){
+//                  d3.select(this)
+//                     .attr("font-weight", "bold")
+//                     .attr("cursor", "pointer")
+//                     .attr("font-size", "18px")
+//                     .attr("stroke", "#986cb3");
+//                 var year = d.getFullYear();
+//                 changeAttribute(year, colorize);
+//                 animateMap(year, colorize, yearExpressedText);
+//             });
+//         });
+// };
+//
 //HIGHLIGHT/DEHIGHLIGHT FUNCTIONS//
 
 
@@ -684,7 +624,7 @@ function highlight(data) {
     //labels should match the yearExpressed and the state of the law during that year
     if (expressed == "Law") {
     //  console.log("highlight function law expressed");
-        labelAttribute = yearExpressed+" legal Status: "+feature[expressed][Number(yearExpressed)];
+        labelAttribute = yearExpressed+" Legal Status: "+feature[expressed][Number(yearExpressed)];
     } else if (expressed == "allExecutions") {
     //  console.log("highlight function exec expressed")
         labelAttribute = yearExpressed+" number of executions: "+feature[expressed][Number(yearExpressed)];

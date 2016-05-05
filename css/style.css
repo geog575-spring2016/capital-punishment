@@ -5,10 +5,12 @@
     margin: 0px;
     padding: 0px;
     top: 0px;
+    margin-left: -20%;
 }
 
 .map {
   background-color: none;
+  /*width: 1000px;*/
 }
 
 h4 {
@@ -134,7 +136,7 @@ h4 {
     padding: 200px;
     padding-left: 60px;
     padding-right: 60px;
-    color: #f9f9f9; 
+    color: #f9f9f9;
     background-color:  #986cb3;
 }
 
@@ -147,10 +149,13 @@ h4 {
 
 /*  Menu CSS */
 /*  ------ */
-.main-menu { 
+.main-menu {
     position: absolute;
-    margin-left: 0% !important;
+    margin-left: -10% !important;
     color: #969696;
+    background-color: white;
+    width: 200px;
+    height: 315px;
 }
 
 .menu-options {
@@ -161,10 +166,10 @@ h4 {
 }
 
 .menu-inset {
-    float: right;
+    /*float: right;*/
     border-style: solid;
     border-width: 2px;
-    border-color: #CCCCCC;
+    border-color: blue;
 }
 
 
@@ -203,7 +208,7 @@ h4 {
 }
 
 .yearExpressedText {
-    float: right; 
+    float: right;
     padding-right: 115px;
     font-family: 'Roboto Slab', sans-serif;
 }
@@ -234,9 +239,10 @@ h4 {
 /*  ------ */
 
 .map {
-    background-color: #fff;
-    margin-left: 26%;
-    padding-left: 3%;
+    background-color: grey;
+    margin-left: 0%;
+    padding-left: 0%;
+    width: 2500px;
 }
 
 .states {
@@ -288,10 +294,10 @@ h4 {
 .graph {
 }
 
-/* .chart is the SVG of the chart itself */
+/* .chart is the SVG of the chart itself WE DON"T NEED*/
 .chart {
     background-color: #00C6FF;
-    background-color: #fff;
+    background-color: white;
     margin-left: 26%;
 }
 
@@ -318,8 +324,9 @@ h4 {
 
 /* Jumps CSS  */
 /* ------------  */
-#map{
-}
+/*#map{
+
+}*/
 
 #overview{
     padding-top:70px;
@@ -407,11 +414,11 @@ h4 {
 /* ----------------  */
 
 ::selection {
-    background-color: #f95618; 
+    background-color: #f95618;
     color: #fff;
 }
 ::-moz-selection {
-    background-color: #f95618; 
+    background-color: #f95618;
     color: #fff;
 }
 
@@ -426,7 +433,7 @@ h1 {
 }
 
 h2 {
-    
+
     font-family: 'Roboto Slab', serif;
 }
 
@@ -434,8 +441,8 @@ h3 {
     font-family: 'Roboto Slab', serif;
 }
 
-body { 
-    padding-top: 50px; 
+body {
+    padding-top: 50px;
 }
 
 .dwarf-butts p {
