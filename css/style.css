@@ -14,19 +14,22 @@
     stroke-width: 0.5px;
 }
 
-#play, #clock {
-  position: absolute;
-  top: 0px;
-}
 #play {
-  left: 15px;
   background: grey;
-  border: none;
   font-size: 30px;
   color: white;
+  width: 150px;
+}
+
+#forward {
+  background: grey;
+  font-size: 30px;
+  color: white;
+  width: 150px;
 }
 
 #clock {
+    float:left;
   left: 100px;
   color: grey;
   font-size: 30px;
@@ -101,7 +104,7 @@
 
 .menu-inset {
     float: right;
-    border-style: solid;
+    border-style: none;
     border-width: 2px;
     border color: none;
 }

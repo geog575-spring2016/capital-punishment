@@ -464,14 +464,6 @@ function timeMapSequence(yearsExpressed) {
                 .attr("y", function(d, i){
                     return d + 30;
                 });
-
-        //  //creates menuBoxes
-        // menuInfoBox = d3.select(".menu-info")
-        //     .append("div")
-        //     .attr("width", menuInfoWidth)
-        //     .attr("height", menuInfoHeight)
-        //     .attr("class", "menuInfoBox textBox")
-        //     .html(infotext + infolink);
     }; //end createMenu
 
 
