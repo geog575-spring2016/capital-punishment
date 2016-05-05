@@ -23,12 +23,7 @@
 //****GLOBAL VARIABLES****//
 var topicArray = ["Law",
                   "allExecutions"]; //the first item in this array will be the default
-//array for law variable
-var arrayLaw = [ "Legal",
-                  "Illegal",
-                  "Moratorium",
-                  "Formal Hold",
-                  "De Facto Moratorium"];
+
 //array for year"s
 var yearArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995","1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"];
 
@@ -59,13 +54,14 @@ var dataEXP = executeYR[20];
 
 
 var yearExpressedText; //variable to store year expressed text
-//Color array for law data -- just threw in some random colors for now
-var colorArrayLaw      = [ "#E24444",
-"#CB1D1D",
-"#A50B0B",
-"#7D0000",
-                            "#FF7373",
-                           ];
+//array for law variable
+var arrayLaw = [ "Legal",
+                  "Illegal",
+                  "Moratorium",
+                  "Formal Hold",
+                  "De Facto Moratorium"];
+var colorArrayLaw      = [ "#b30000", "#e34a33", "#fc8d59", "#fdcc8a", "#fef0d9"
+];
 //the map width is a function of window size
 var mapWidth = window.innerWidth * 0.7,
 mapHeight = 600;
@@ -161,19 +157,16 @@ function joinData(topojson, csvData, attribute, json){
             var csvState = csvData[i];
             //the way we're linking the csv data is using abrev
             var csvLink = csvState.abrev;
-            //console.log(jsonStates[a]); //fails
 
             //for each state in jsonStates, loop through and link it to the csv data
             for(var a=0; a<jsonStates.length; a++){
                 //check if abrev = abrev, it will join
                 if (jsonStates[a].properties.abrev == csvLink){
                   //if this evaluates to true, join is working:
-                  //console.log(jsonStates[a].properties.abrev == csvLink);
                     //attrObj holds all the attributes. so... many... informations
                     attrObj = {};
                     //loop to assign key/value pairs to json object
                     for(var year in yearArray){
-                      //console.log(yearArray);
                     //attr variable holds all years as separate objects
                         var attr = yearArray[year];
                         //val variable holds all the values for law and allExecutions
@@ -216,7 +209,6 @@ function implementState(csvData, json) {
             return choropleth(d, colorize);
 
         })
-        console.log("made it end of callback");
         changeAttribute(yearExpressed, colorize);
         mapSequence(yearExpressed);  // update the representation of the map
 };
@@ -279,35 +271,8 @@ function newPropSymb(circles, data) {
         });
 };
 
-//for our menu, which will include law, overlay of total executions
-function drawMenu(){
-    //click changes on Overview
-    $(".Legal").click(function() {
-
-        expressed = topicArray[0];
-        yearExpressed = yearArray[yearArray.length-1];
-        d3.selectAll(".yearExpressedText").remove();
-        drawMenuInfo(colorize, yearExpressed);
-        d3.selectAll(".menu-options div").style({'background-color': '#e1e1e1','color': '#969696'});
-        d3.selectAll(".states").style("fill", function(d){
-                return choropleth(d, colorize);
-            })
-            .select("desc")
-                .text(function(d) {
-                    return choropleth(d, colorize);
-            });
-        createMenu(arrayOverview, colorArrayOverview, "Legal Status: ");
-        $(".Legal").css({'background-color': '#CCCCCC','color': '#333333'});
-        //removes chart
-        var oldChart = d3.selectAll(".chart").remove();
-        var oldRects = d3.selectAll(".chartRect").remove();
-    });
-
-}; //end drawMenu
-
     //creates dropdown menu
     function drawMenuInfo(colorize, yearExpressed){
-      console.log("made it to drawmenuinfo");
         //creates year for map menu
         yearExpressedText = d3.select('#clock')
             .attr("x", 0)
@@ -329,8 +294,8 @@ function drawMenu(){
                     yearExpressed = 1976,
                     yearExpressed++;  // increment the current attribute counter
                     changeAttribute(yearExpressed, colorize);
+                     setSymbols(path, map, allExecutions, projection);
                 } else {
-                    console.log("else in animate map");
                     currentAttribute = 0;  // or reset it to zero
                 }
                 d3.select('#clock').html(yearExpressed);  // update the clock
@@ -356,7 +321,6 @@ function drawMenu(){
                     yearExpressed++;  // increment the current attribute counter
                     changeAttribute(yearExpressed, colorize);
                 } else {
-                    console.log("else in animate map");
                     currentAttribute = 0;  // or reset it to zero
                 }
                 d3.select('#clock').html(yearExpressed);  // update the clock
@@ -385,7 +349,6 @@ function timeMapSequence(yearsExpressed) {
 
     //iterate over the years
     function mapSequence(yearExpressed) {
-      console.log("made it to mapseq");
       //whene sequencing, call the change attribute fxn
         changeAttribute(yearExpressed, colorize);
         if (yearExpressed < yearArray[yearArray.length-1]){
@@ -395,21 +358,16 @@ function timeMapSequence(yearsExpressed) {
 
     //changes the year displayed on map
     function changeAttribute(year, colorize){
-      console.log("made it to changeAttribute");
       //this stuff removes the old year info
         for (y = 0; y < yearArray.length; y++){
             if (year == yearArray[y]) {
               //y represents the year
                  yearExpressed = yearArray[y];
-                // console.log(yearExpressed = yearArray[y]);
-                console.log(yearArray[y]);
             }
         }
         //colorizes the states
-    console.log("made it to d3.selectAll states")
         d3.selectAll(".states")
             .style("fill", function(year){
-            //console.log("makes it to styling states");
                 return choropleth(year, colorize);
             })
             .select("desc")
@@ -422,10 +380,8 @@ function timeMapSequence(yearsExpressed) {
             .selectAll('g')
             .attr("font-weight", function(d){
                 if (year == d.getFullYear()){
-                  console.log("bold");
                     return "bold";
                 } else {
-                  console.log("normal");
                     return "normal";
                 }
             }).attr("font-size", function(d){
@@ -442,14 +398,12 @@ function timeMapSequence(yearsExpressed) {
                 }
               });
          drawMenuInfo(colorize, year);
-        console.log("end of changeattribute");
     }; //end of changeAttribute
 
 
 
     //creates the menu items
     function createMenu(arrayX, arrayY, title, infotext, infolink){
-      console.log("made it to createmenu");
         var yArray = [40, 85, 130, 175, 220, 265];
         var oldItems = d3.selectAll(".menuBox").remove();
         var oldItems2 = d3.selectAll(".menuInfoBox").remove();
@@ -520,85 +474,16 @@ function timeMapSequence(yearsExpressed) {
         //     .html(infotext + infolink);
     }; //end createMenu
 
-    //creates the menu items
-    function createMenu(arrayX, arrayY, title, infotext, infolink){
-        var yArray = [40, 85, 130, 175, 220, 265];
-        var oldItems = d3.selectAll(".menuBox").remove();
-        var oldItems2 = d3.selectAll(".menuInfoBox").remove();
-
-        //creates menuBoxes
-        menuBox = d3.select(".menu-inset")
-                .append("svg")
-                .attr("width", menuWidth)
-                .attr("height", menuHeight)
-                .attr("class", "menuBox");
-
-        //creates Menu Title
-        var menuTitle = menuBox.append("text")
-            .attr("x", 10)
-            .attr("y", 30)
-            .attr("class","title")
-            .text(title)
-            .style("font-size", '16px');
-
-        //draws and shades boxes for menu
-        for (b = 0; b < arrayX.length; b++){
-           var menuItems = menuBox.selectAll(".items")
-                .data(arrayX)
-                .enter()
-                .append("rect")
-                .attr("class", "items")
-                .attr("width", 35)
-                .attr("height", 35)
-                .attr("x", 15);
-
-            menuItems.data(yArray)
-                .attr("y", function(d, i){
-                    return d;
-                });
-
-            menuItems.data(arrayY)
-                .attr("fill", function(d, i){
-                    return arrayY[i];
-                });
-        };
-        //creates menulabels
-        var menuLabels = menuBox.selectAll(".menuLabels")
-            .data(arrayX)
-            .enter()
-            .append("text")
-            .attr("class", "menuLabels")
-            .attr("x", 60)
-            .text(function(d, i){
-                for (var c = 0; c < arrayX.length; c++){
-                    return arrayX[i]
-                }
-            })
-            .style({'font-size': '14px', 'font-family': 'Arial', 'color': 'white'});
-
-            menuLabels.data(yArray)
-                .attr("y", function(d, i){
-                    return d + 30;
-                });
-
-    }; //end createMenu
 
 
     function colorScale(data){
-      //console.log("made it to colorscale");
     //determines which variable is being expressed, assigns the color scheme to empty currentColors array
         if (expressed === "Law") {
-          //console.log("expressed = law");
             currentColors = colorArrayLaw;
             currentArray = arrayLaw;
-            //console.log(currentArray);
-            //console.log(arrayLaw);
-           //console.log(colorArrayLaw);
         } else if (expressed === "allExecutions") {
-        //  console.log("expressed = all exec");
         //here is where we call the function for the prop symbols that kai is working on... I think.
         };
-      //console.log(data);
         //ordinal scale = discrete, like names or categories (use for law variable)
         scale = d3.scale.ordinal()
                     .range(currentColors)
@@ -624,9 +509,7 @@ function colorScaleChart(data) {
 
 
 function choropleth(d, year, colorize){
-//  console.log("in choropleth function");
 //conditional statement, setting data equal to
-console.log("made it to choropleth");
 var data = d.properties ? d.properties[expressed] : d;
 return colorScale(data);
 };
@@ -638,7 +521,6 @@ function choroplethChart(d, colorize) {
 
 //sets up the chart
 function setChart(yearExpressed) {
-  console.log("made it to setchart");
     // reset the timelineFeatureArray each time setChart is called
     timelineFeatureArray = []; //this will hold the new feature objects that will include a value for which year a law changed
     //initial setup of chart
@@ -792,14 +674,11 @@ function highlight(data) {
     //set the state name as the label title
     var labelName = feature.abrev;
     var labelAttribute;
-    //console.log("made it to highlight function");
     //set up the text for the dynamic labels for the map
     //labels should match the yearExpressed and the state of the law during that year
     if (expressed == "Law") {
-    //  console.log("highlight function law expressed");
         labelAttribute = yearExpressed+" legal Status: "+feature[expressed][Number(yearExpressed)];
     } else if (expressed == "allExecutions") {
-    //  console.log("highlight function exec expressed")
         labelAttribute = yearExpressed+" number of executions: "+feature[expressed][Number(yearExpressed)];
     }
     var retrievelabel = d3.select(".map")
