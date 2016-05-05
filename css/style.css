@@ -1,11 +1,14 @@
 /******MAP STYLING******/
-
 #mainmap {
     background: black;
     margin: 0px;
     padding: 0px;
     top: 0px;
     margin-left: 15%;
+}
+
+#execution {
+  font-size: 14pt;
 }
 
 
@@ -29,19 +32,9 @@
 }
 
 #clock {
-    float:left;
   left: 100px;
   color: grey;
   font-size: 30px;
-}
-
-
-.jumbotron {
-    padding: 200px;
-    padding-left: 60px;
-    padding-right: 60px;
-    color: #f9f9f9;
-    background-color:  #986cb3;
 }
 
 
@@ -52,19 +45,27 @@
 
 .main-menu {
     position: absolute;
-    margin-left: -10% !important;
-    color: #969696;
+    margin-left: -10%;
     background-color: white;
-    width: 200px;
+    width: 190px;
     height: 315px;
 }
 
+rect {
+  height: 40px;
+  width: 40px;
+}
+
+text {
+  style: bold;
+}
+
 .menu-options {
-    float: left;
     background-color:  #e1e1e1;
     cursor: pointer;
     font-family: Open Sans, sans-serif;
 }
+
 
 
 .overlay-menu {
@@ -95,7 +96,6 @@
 }*/
 
 .yearExpressedText {
-    float: right;
     padding-right: 115px;
     font-family: 'Roboto Slab', sans-serif;
     top: 10px;
@@ -119,31 +119,27 @@
 
 .infoLabel {
     position: absolute;
-    height: auto;
-    /*border: solid thin #fff;*/
     padding: 10px;
     float:right;
     display:inline-block;
-    margin-right:-200px;
+    margin-right:200px;
 }
 
 .labelTitle {
-   position: absolute;
-   font-family: 'Roboto Slab', serif;
+   font-family: Candara;
    font-weight:bold;
    font-size:20px;
    line-height:24px;
-   background-color: #525252;
-   color:#fff;
-   z-index: 2;
+   background-color: white;
+   color:grey;
    width:200px;
    padding:10px;
-   margin-top: -240px;
-   margin-left:660px;
+   margin-top: -600px;
+   margin-left:760px;
 }
 
 .labelAttribute {
-    font-family: 'Open Sans', sans-serif;
+    font-family: Candara;
     font-size:16px;
     font-weight:normal;
     line-height: 20px;
@@ -152,4 +148,3 @@
 .well {
   font-size: 24px;
 }
-
