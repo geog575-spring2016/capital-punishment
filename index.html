@@ -12,16 +12,30 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/cyborg/bootstrap.min.css" rel="stylesheet" integrity="sha384-uSbimwRPo7PKyTL6azsx1CcBce/X9Qg+wX1MAjNV1gAkSXYveZbZeMMyJghdsSol" crossorigin="anonymous">
   </head>
   <body>
-      <button id="forward">forward</button>
         <nav class="navbar navbar-default">
             <div class="navbar-header">
               <div class="menu-info">
-                <button id="play">play</button>
                 <div class="container-fluid">
                   <div class = "chart">
                     <span class="sr-only">Toggle navigation</span>
                       <a class="navbar-brand" href="/index.html"></a>
                          <div id="mainmap" class="map">
+                              <div class="sequence-buttons">
+        <div class="button">
+            <button type="button" class="stepBackward">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="play">
+                <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="pause">
+               <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="stepForward">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>  
                            <div class="main-menu">
                              <span id="clock"></span>
                              <div class="menu-inset" style="width:200px;height:318px;">

@@ -1,5 +1,3 @@
-
-
 //bugs/issues to deal with:
 //1) determine how to label states separately (because now we're using the unique field = no spaces)
 //2) cycle over time (default to 2015 on load, on play, start at 1977 and sequence forward)- NATALEE
@@ -29,6 +27,10 @@
 //4) a reset/home button?
 //5) why didn't our map appear? figure out what's going on with how it's showing up in different browsers. 
 ////firefox works for kai, chrome works for me
+//6) cartography focus: normalization
+//7) think about our default view
+//8) assign someone to do the styling and UI (consistent aesthetic style)
+
 
 //****GLOBAL VARIABLES****//
 var topicArray = ["Law",
