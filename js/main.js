@@ -6,19 +6,6 @@
 //5) Add pause/forward/back buttons - NATALEE
 
 
-//Meeting with Robin 5/2
-//PSEUDOCODING TIME SEQUENCING//
-//1) what is the currently selected year? store as a variable = yearExpressedText (DONE)
-//2) create the sequencing element (slider or play button, either jquery or d3) (DONE)
-//3) create # of notches on slider (exact # of years)
-//4) assign each notch a year
-//5) function to step forwards or backwards
-//6) call a function to change choro to corresponding year
-//7) update the label
-//8) update the timeline visualization
-//9) eventually update the prop symbols too :)
-
-
 //NOTES FROM PRESENTATION
 //1) let's clarify what we want to communicate with this map. are we pro, against, or attempting to be unbiased?
 //2) once we clarify our stance, let's decide on a color scheme. think about what is rising to figure! 
@@ -36,7 +23,7 @@
 var topicArray = ["Law",
                   "allExecutions"]; //the first item in this array will be the default
 
-//array for year"s
+//array for year's
 var yearArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995","1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"];
 
 // NOTE: special array for the updated dataset that links to proportional symbols
@@ -69,11 +56,10 @@ var yearExpressedText; //variable to store year expressed text
 //array for law variable
 var arrayLaw = [ "Legal",
                   "Moratorium",
-                    "De Facto Moratorium",
+                  "De Facto Moratorium",
                   "Formal Hold",
                    "Illegal"];
-var colorArrayLaw      = [ "#b30000", "#e34a33", "#fc8d59", "#fdcc8a", "#fef0d9"
-];
+var colorArrayLaw  = [ "#b30000", "#e34a33", "#fc8d59", "#fdcc8a", "#fef0d9"];
 //the map width is a function of window size
 var mapWidth = window.innerWidth * 0.7,
 mapHeight = 600;
@@ -132,7 +118,7 @@ function callback(error, Law, allExecutions, continentalUS, ex){
     
     //variable to store the continentalUS json with all attribute data
     joinedJson = topojson.feature(continentalUS,
-        continentalUS.objects.states).features;
+    continentalUS.objects.states).features;
 
     //colorize is colorscale function called for the joined data
     colorize = colorScale(joinedJson);
