@@ -155,10 +155,6 @@ function callback(error, Law, allExecutions, continentalUS, ex){
 
     setSymbols(path, map, allExecutions, projection);
 
-    //call the function to create the menu, law choropleth as default on load
-    drawMenu();
-
-
 }; //callback end
 
 function joinData(topojson, csvData, attribute, json){
@@ -293,7 +289,6 @@ function newPropSymb(circles, data) {
             .style({'font-size':'36px', 'font-weight': 'strong'});
     }; //done with drawMenuInfo
 
-    //controls click events
 //vcr controls click events
 function animateMap(yearExpressed, colorize, yearExpressedText){
     //step backward functionality
@@ -306,18 +301,18 @@ function animateMap(yearExpressed, colorize, yearExpressedText){
             changeAttribute(yearExpressed, colorize);
         }; 
     });
-    //play functionality
+    //play 
     $(".play").click(function(){
         timer.play();
-        $('.play').prop('disabled', true);
+        $('.play').prop('disabled', false);
     });
-    //pause functionality
+    //pause 
     $(".pause").click(function(){
         timer.pause();
         $('.play').prop('disabled', false);
         changeAttribute(yearExpressed, colorize);
     });
-    //step forward functionality
+    //step forward 
     $(".stepForward").click(function(){
         if (yearExpressed < yearArray[yearArray.length-1]){
             yearExpressed++;
@@ -333,7 +328,7 @@ function animateMap(yearExpressed, colorize, yearExpressedText){
 //for play functionality
 function timeMapSequence(yearsExpressed) {
     changeAttribute(yearExpressed, colorize);
-    if (yearsExpressed < keyArray[keyArray.length-1]){
+    if (yearsExpressed < yearArray[yearArray.length-1]){
         yearExpressed++; 
     };
 }; //end timeMapSequence
@@ -765,8 +760,8 @@ function moveLabel(){
 
 // jQuery timer for play/pause
 var timer = $.timer(function() {
-        if (yearExpressed == keyArray[keyArray.length-1]){
-            yearExpressed = keyArray[0];
+        if (yearExpressed == yearArray[yearArray.length-1]){
+            yearExpressed = yearArray[0];
         };
         animateMap(yearExpressed, colorize, yearExpressedText);
         timeMapSequence(yearExpressed);  
