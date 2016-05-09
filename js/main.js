@@ -43,7 +43,7 @@ This variable is key and controls all values later on throughout
 // special attention here
 
 ************************************************************** */
-var dataEXP = executeYR[20];
+var dataEXP = 1997;
 
 console.log("CRAZY TEST BUG CAN'T FIND");
 
@@ -70,8 +70,9 @@ var projection;
 // Global variable declared for tracking the current year
 var yearExpressed;
 
-// Global variable controling 'setSymbol' function
-var symbolSet = false;
+// Global variables controling 'setSymbol' function
+var circles; // variable holding circle objects
+var symbolSet = false; // variable activating function
 
 /* *** START PROGRAM *** */
 
@@ -81,8 +82,7 @@ window.onload = initialize();
 function initialize(){
   expressed = topicArray[0];
   yearExpressed = yearArray[0];
-  //call function to animate the map to iterate over the years
-   animateMap(yearExpressed, colorize, yearExpressedText);
+
     //call setmap to set up the map
     setMap();
     createMenu(arrayLaw, colorArrayLaw);
@@ -141,9 +141,12 @@ function callback(error, Law, allExecutions, continentalUS, ex){
 
     };
 
+    // First implementation of choropleth and prop symbols
     implementState (csvArray[csv], joinedJson);
+    setSymb(path, map, projection, allExecutions);
 
-    setSymbols(path, map, projection, allExecutions);
+    //call function to animate the map to iterate over the years
+    animateMap(yearExpressed, colorize, yearExpressedText, allExecutions);
 
 }; //callback end
 
@@ -215,7 +218,11 @@ function implementState(csvData, json) {
 // Create proportional symbols to display all execution data for expressed year
 function setSymb (path, map, projection, data){
 
-     var circles = map.selectAll(".circles")
+    console.log("setSymb function");
+
+    if (!symbolSet) {
+        console.log("function activated");
+     circles = map.selectAll(".circles")
         .data(data)
         .enter()
         .append("circle")
@@ -227,11 +234,17 @@ function setSymb (path, map, projection, data){
             return projection([d.Longitude, d.Latitude])[0]; })
         .attr("cy", function(d) { return projection([d.Longitude, d.Latitude])[1]; });
 
-    updateSymb(circles, data);
+        // set parameter true to deactivate script
+        setSymb = true;
+
+    }
+
+    updateSymb(data);
+    
 
 };
 
-function updateSymb(circles, data) {
+function updateSymb(data) {
 
     // create array to store all values for 
     var domainArray = [];
@@ -275,7 +288,7 @@ function updateSymb(circles, data) {
 
     //create a second svg element to hold the bar chart
     var circleRadius= circles.attr("r", function(d){
-            return setRadius(d[dataEXP]);
+            return setRadius(d[selYear]);
         });
 };
 
@@ -290,12 +303,13 @@ function updateSymb(circles, data) {
     }; //done with drawMenuInfo
 
 //vcr controls click events
-function animateMap(yearExpressed, colorize, yearExpressedText){
+function animateMap(yearExpressed, colorize, yearExpressedText, data){
     //step backward functionality
     $(".stepBackward").click(function(){
         if (yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
             yearExpressed--;
             changeAttribute(yearExpressed, colorize);
+            setSymb(path, map, projection, data);
         } else {
             yearExpressed = yearArray[yearArray.length-1];
             changeAttribute(yearExpressed, colorize);
