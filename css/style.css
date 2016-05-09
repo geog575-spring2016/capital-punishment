@@ -93,13 +93,13 @@ text {
     font-family: 'Roboto Slab', sans-serif;
 }
 
-/*.menuBox {
+.menuBox {
     width: 50%;
     float: left;
     padding-bottom: 1%;
     margin-bottom: 100%;
     background: none;
-}*/
+}
 
 .yearExpressedText {
     padding-right: 115px;
@@ -172,6 +172,7 @@ text {
 }
 
 .axis path,
+
 .axis line {
   fill: none;
   stroke: #000;
