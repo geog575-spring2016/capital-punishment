@@ -26,9 +26,6 @@ var topicArray = ["Law",
 //array for year's
 var yearArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995","1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"];
 
-// NOTE: special array for the updated dataset that links to proportional symbols
-var executeYR = ["Y1977", "Y1978", "Y1979", "Y1980", "Y1981", "Y1982", "Y1983", "Y1984", "Y1985", "Y1986", "Y1987", "Y1988", "Y1989", "Y1990", "Y1991", "Y1992", "Y1993", "Y1994", "Y1995", "Y1996", "Y1997", "Y1998", "Y1999", "Y2000", "Y2001", "Y2002", "Y2003", "Y2004", "Y2005", "Y2006", "Y2007", "Y2008", "Y2009", "Y2010", "Y2011", "Y2012", "Y2013", "Y2014", "Y2015"];
-
 //choropleth global variables
 var currentColors = []; //empty array to fill with corresponding colors
 var currentArray = []; //empty array to fill with the current topic
@@ -37,8 +34,6 @@ var scale; //
 var colorize; //
 var playing = false; //default to not play on load
 
-// proportional symbol global variables
-var currentYR = 20;
 
 /* **************************************************************
 
@@ -48,9 +43,9 @@ This variable is key and controls all values later on throughout
 // special attention here
 
 ************************************************************** */
-var dataEXP = executeYR[20];
+var dataEXP = 1997;
 
-
+console.log("CRAZY TEST BUG CAN'T FIND");
 
 var yearExpressedText; //variable to store year expressed text
 //array for law variable
@@ -67,18 +62,27 @@ var menuWidth = 200, menuHeight = 300;
 var menuInfoWidth = 250, menuInfoHeight = 100;
 var joinedJson;
 
+// Global variable declared for implenting the d3 map
 var map;
 var path;
 var projection;
+
+// Global variable declared for tracking the current year
+var yearExpressed;
+
+// Global variables controling 'setSymbol' function
+var circles; // variable holding circle objects
+var symbolSet = false; // variable activating function
+
+/* *** START PROGRAM *** */
 
 //when window loads, initiate map
 window.onload = initialize();
 
 function initialize(){
-  expressed = topicArray[0];
-  yearExpressed = yearArray[0];
-  //call function to animate the map to iterate over the years
-   animateMap(yearExpressed, colorize, yearExpressedText);
+    expressed = topicArray[0];
+    yearExpressed = yearArray[38];
+
     //call setmap to set up the map
     setMap();
     createMenu(arrayLaw, colorArrayLaw);
@@ -104,7 +108,7 @@ function setMap() {
     d3_queue.queue()
     //queue funcion loads external data asynchronously
         .defer(d3.csv, "../data/Law.csv") //laws by year
-        .defer(d3.csv,"../data/allExecutions_up.csv") //executions by year
+        .defer(d3.csv,"../data/allExecutions_up01.csv") //executions by year
         .defer(d3.json, "../data/continentalUS.topojson") //geometries
         .defer(d3.json, "../data/allExecutions.geojson") //geometries
         .await(callback);
@@ -137,9 +141,14 @@ function callback(error, Law, allExecutions, continentalUS, ex){
 
     };
 
-    implementState (csvArray[csv], joinedJson);
+    //call function to animate the map to iterate over the years
+    animateMap(yearExpressed, colorize, yearExpressedText, allExecutions);
 
-    setSymbols(path, map, allExecutions, projection);
+    // First implementation of choropleth and prop symbols
+    implementState (csvArray[csv], joinedJson);
+    setSymb(path, map, projection, allExecutions);
+
+
 
 }; //callback end
 
@@ -203,14 +212,19 @@ function implementState(csvData, json) {
             return choropleth(d, colorize);
 
         })
+
         changeAttribute(yearExpressed, colorize);
         mapSequence(yearExpressed);  // update the representation of the map
 };
 
 // Create proportional symbols to display all execution data for expressed year
-function setSymbols (path, map, data, projection){
+function setSymb (path, map, projection, data){
 
-     var circles = map.selectAll(".circles")
+    console.log("setSymb function");
+
+    if (!symbolSet) {
+        console.log("function activated");
+     circles = map.selectAll(".circles")
         .data(data)
         .enter()
         .append("circle")
@@ -222,25 +236,40 @@ function setSymbols (path, map, data, projection){
             return projection([d.Longitude, d.Latitude])[0]; })
         .attr("cy", function(d) { return projection([d.Longitude, d.Latitude])[1]; });
 
-    console.log("Test3");
+        // set parameter true to deactivate script
+        setSymb = true;
 
-    console.log(dataEXP);
+    }
 
-    // console.log(data[state][0]);
-
-
-    newPropSymb(circles, data);
+    updateSymb(data);
+    
 
 };
 
-function newPropSymb(circles, data) {
+function updateSymb(data) {
 
     // create array to store all values for 
     var domainArray = [];
 
+    /* *** ALL TESTING BOX *** */
+    console.log("TEST - 01");
+
+    var selYear = yearExpressed;
+    console.log(selYear);
+
+    console.log("TEST - 02")
+    console.log(dataEXP);
+    console.log("TEST - 03");
+    console.log(selYear);
+
+    // typecasting number to string to access column in dataset
+    selYear = '' + selYear;
+    console.log(selYear);
+    /* *** TESTING BOX END *** */
+
     for (var i=0; i<data.length; i++) {
 
-        var val = parseFloat(data[i][dataEXP]);
+        var val = parseFloat(data[i][selYear]);
 
         console.log(val);
 
@@ -261,7 +290,7 @@ function newPropSymb(circles, data) {
 
     //create a second svg element to hold the bar chart
     var circleRadius= circles.attr("r", function(d){
-            return setRadius(d[dataEXP]);
+            return setRadius(d[selYear]);
         });
 };
 
@@ -276,12 +305,13 @@ function newPropSymb(circles, data) {
     }; //done with drawMenuInfo
 
 //vcr controls click events
-function animateMap(yearExpressed, colorize, yearExpressedText){
+function animateMap(yearExpressed, colorize, yearExpressedText, data){
     //step backward functionality
     $(".stepBackward").click(function(){
         if (yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
             yearExpressed--;
             changeAttribute(yearExpressed, colorize);
+            updateSymb(data);
         } else {
             yearExpressed = yearArray[yearArray.length-1];
             changeAttribute(yearExpressed, colorize);
@@ -303,6 +333,7 @@ function animateMap(yearExpressed, colorize, yearExpressedText){
         if (yearExpressed < yearArray[yearArray.length-1]){
             yearExpressed++;
             changeAttribute(yearExpressed, colorize);
+            updateSymb(data);
         } else {
             yearExpressed = yearArray[0];
             changeAttribute(yearExpressed, colorize);
@@ -376,7 +407,7 @@ function timeMapSequence(yearsExpressed) {
 
 
     //creates the menu items
-    function createMenu(arrayX, arrayY, title, infotext, infolink){
+    function createMenu(arrayX, arrayY, title, infotext, infolink) {
         var yArray = [40, 85, 130, 175, 220, 265];
         var oldItems = d3.selectAll(".menuBox").remove();
         var oldItems2 = d3.selectAll(".menuInfoBox").remove();
