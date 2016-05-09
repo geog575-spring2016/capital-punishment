@@ -122,7 +122,7 @@ function callback(error, Law, allExecutions, continentalUS, ex){
     
     //variable to store the continentalUS json with all attribute data
     joinedJson = topojson.feature(continentalUS,
-    continentalUS.objects.states).features;
+    continentalUS.objects.states).properties;
 
     //colorize is colorscale function called for the joined data
     colorize = colorScale(joinedJson);
@@ -228,13 +228,15 @@ function setSymb (path, map, projection, data){
         .data(data)
         .enter()
         .append("circle")
-        .attr("class", function(d){
-            return "circles " + d.state; })
-        .attr("fill", "grey")
+        .attr("class", function(d) {
+            return "circles " + d.state; 
+        }).attr("fill", "grey")
         .attr('fill-opacity',0.75)
         .attr("cx", function(d) {
-            return projection([d.Longitude, d.Latitude])[0]; })
-        .attr("cy", function(d) { return projection([d.Longitude, d.Latitude])[1]; });
+            return projection([d.Longitude, d.Latitude])[0]; 
+        }).attr("cy", function(d) { 
+            return projection([d.Longitude, d.Latitude])[1]; 
+        });
 
         // set parameter true to deactivate script
         setSymb = true;
