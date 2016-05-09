@@ -88,13 +88,6 @@ text {
     cursor: pointer;
 }
 
-.executions {
-    float: left;
-    background-color: #800000;
-    color: grey;
-    text-align: center;
-    padding: 2%;
-}
 
 .title {
     font-family: 'Roboto Slab', sans-serif;
