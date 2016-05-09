@@ -240,10 +240,7 @@ function setSymb (path, map, projection, data){
         setSymb = true;
 
     }
-
     updateSymb(data);
-    
-
 };
 
 function updateSymb(data) {
@@ -556,12 +553,6 @@ function dehighlight(data) {
         .filter(".states");
     var fillColor = selection.select("desc").text();
     selection.style("fill", fillColor);
-
-    //chart
-    var chartSelection = d3.selectAll("."+feature.abrev)
-        .filter(".chartRect");
-    var chartFillColor = chartSelection.select("desc").text();
-    chartSelection.style("fill", chartFillColor);
 };
 
 function setLabel(props) {

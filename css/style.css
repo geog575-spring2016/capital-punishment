@@ -1,5 +1,6 @@
 /******MAP STYLING******/
 
+
 #mainmap {
     background: none;
     margin: 0px;
@@ -7,11 +8,6 @@
     top: 0px;
     margin-left: 15%;
 }
-
-#execution {
-  font-size: 14pt;
-}
-
 
 .states {
     stroke: black;
@@ -34,7 +30,7 @@
 
 #clock {
   left: 100px;
-  color: grey;
+  color: #800000;
   font-size: 30px;
 }
 
