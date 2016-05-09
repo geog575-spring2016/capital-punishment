@@ -26,9 +26,6 @@ var topicArray = ["Law",
 //array for year's
 var yearArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995","1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"];
 
-// NOTE: special array for the updated dataset that links to proportional symbols
-var executeYR = ["Y1977", "Y1978", "Y1979", "Y1980", "Y1981", "Y1982", "Y1983", "Y1984", "Y1985", "Y1986", "Y1987", "Y1988", "Y1989", "Y1990", "Y1991", "Y1992", "Y1993", "Y1994", "Y1995", "Y1996", "Y1997", "Y1998", "Y1999", "Y2000", "Y2001", "Y2002", "Y2003", "Y2004", "Y2005", "Y2006", "Y2007", "Y2008", "Y2009", "Y2010", "Y2011", "Y2012", "Y2013", "Y2014", "Y2015"];
-
 //choropleth global variables
 var currentColors = []; //empty array to fill with corresponding colors
 var currentArray = []; //empty array to fill with the current topic
@@ -37,8 +34,6 @@ var scale; //
 var colorize; //
 var playing = false; //default to not play on load
 
-// proportional symbol global variables
-var currentYR = 20;
 
 /* **************************************************************
 
@@ -50,7 +45,7 @@ This variable is key and controls all values later on throughout
 ************************************************************** */
 var dataEXP = executeYR[20];
 
-
+console.log("CRAZY TEST BUG CAN'T FIND");
 
 var yearExpressedText; //variable to store year expressed text
 //array for law variable
@@ -67,9 +62,18 @@ var menuWidth = 200, menuHeight = 300;
 var menuInfoWidth = 250, menuInfoHeight = 100;
 var joinedJson;
 
+// Global variable declared for implenting the d3 map
 var map;
 var path;
 var projection;
+
+// Global variable declared for tracking the current year
+var yearExpressed;
+
+// Global variable controling 'setSymbol' function
+var symbolSet = false;
+
+/* *** START PROGRAM *** */
 
 //when window loads, initiate map
 window.onload = initialize();
@@ -139,7 +143,7 @@ function callback(error, Law, allExecutions, continentalUS, ex){
 
     implementState (csvArray[csv], joinedJson);
 
-    setSymbols(path, map, allExecutions, projection);
+    setSymbols(path, map, projection, allExecutions);
 
 }; //callback end
 
@@ -203,12 +207,13 @@ function implementState(csvData, json) {
             return choropleth(d, colorize);
 
         })
+
         changeAttribute(yearExpressed, colorize);
         mapSequence(yearExpressed);  // update the representation of the map
 };
 
 // Create proportional symbols to display all execution data for expressed year
-function setSymbols (path, map, data, projection){
+function setSymb (path, map, projection, data){
 
      var circles = map.selectAll(".circles")
         .data(data)
@@ -222,25 +227,34 @@ function setSymbols (path, map, data, projection){
             return projection([d.Longitude, d.Latitude])[0]; })
         .attr("cy", function(d) { return projection([d.Longitude, d.Latitude])[1]; });
 
-    console.log("Test3");
-
-    console.log(dataEXP);
-
-    // console.log(data[state][0]);
-
-
-    newPropSymb(circles, data);
+    updateSymb(circles, data);
 
 };
 
-function newPropSymb(circles, data) {
+function updateSymb(circles, data) {
 
     // create array to store all values for 
     var domainArray = [];
 
+    /* *** ALL TESTING BOX *** */
+    console.log("TEST - 01");
+
+    var selYear = yearExpressed;
+    console.log(selYear);
+
+    console.log("TEST - 02")
+    console.log(dataEXP);
+    console.log("TEST - 03");
+    console.log(selYear);
+
+    // typecasting number to string to access column in dataset
+    selYear = '' + selYear;
+    console.log(selYear);
+    /* *** TESTING BOX END *** */
+
     for (var i=0; i<data.length; i++) {
 
-        var val = parseFloat(data[i][dataEXP]);
+        var val = parseFloat(data[i][selYear]);
 
         console.log(val);
 
