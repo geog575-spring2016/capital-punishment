@@ -57,7 +57,7 @@ p2{
     margin-left: -10%;
     background-color: white;
     width: 190px;
-    height: 315px;
+    height: 200px;
 }
 
 rect {
@@ -156,7 +156,7 @@ text {
 
 /*bar chart*/
 .bar {
-  fill: steelblue;
+  fill: red;
 }
 
 .bar:hover {
@@ -168,6 +168,7 @@ text {
 }
 
 .axis path,
+
 .axis line {
   fill: none;
   stroke: #000;

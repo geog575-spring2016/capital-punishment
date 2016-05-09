@@ -8,11 +8,11 @@
 
 //NOTES FROM PRESENTATION
 //1) let's clarify what we want to communicate with this map. are we pro, against, or attempting to be unbiased?
-//2) once we clarify our stance, let's decide on a color scheme. think about what is rising to figure! 
+//2) once we clarify our stance, let's decide on a color scheme. think about what is rising to figure!
 //3) play/forward buttons are confusing, let's use visual affordances rather than words (or are words ok to keep?)
 /////and we need to figure out to have only a play button at load, then forward/back when the map is in motion
 //4) a reset/home button?
-//5) why didn't our map appear? figure out what's going on with how it's showing up in different browsers. 
+//5) why didn't our map appear? figure out what's going on with how it's showing up in different browsers.
 ////firefox works for kai, chrome works for me
 //6) cartography focus: normalization
 //7) think about our default view
@@ -71,7 +71,7 @@ var yearExpressed;
 var circles; // variable holding circle objects
 var symbolSet = false; // variable activating function
 
-// Global variable storing data file 
+// Global variable storing data file
 var file;
 
 /* *** START PROGRAM *** */
@@ -119,7 +119,7 @@ function setMap() {
 //accepts errors from queue function as first argument
 
 function callback(error, Law, allExecutions, continentalUS){
-    
+
     console.log(Law);
     //variable to store the continentalUS json with all attribute data
     joinedJson = topojson.feature(continentalUS, continentalUS.objects.states).features;
@@ -183,7 +183,7 @@ function joinData(topojson, csvData, attribute, json){
             };
         };
      };
-    d3.select('#play').html(yearArray[yearExpressed]); 
+    d3.select('#play').html(yearArray[yearExpressed]);
 
 };
 
@@ -227,13 +227,13 @@ function setSymb (path, map, projection, data){
         .enter()
         .append("circle")
         .attr("class", function(d) {
-            return "circles " + d.state; 
+            return "circles " + d.state;
         }).attr("fill", "grey")
         .attr('fill-opacity',0.75)
         .attr("cx", function(d) {
-            return projection([d.Longitude, d.Latitude])[0]; 
-        }).attr("cy", function(d) { 
-            return projection([d.Longitude, d.Latitude])[1]; 
+            return projection([d.Longitude, d.Latitude])[0];
+        }).attr("cy", function(d) {
+            return projection([d.Longitude, d.Latitude])[1];
         });
 
         // set parameter true to deactivate script
@@ -241,11 +241,16 @@ function setSymb (path, map, projection, data){
 
     }
     updateSymb(data);
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/master
 };
 
 function updateSymb(data) {
 
-    // create array to store all values for 
+    // create array to store all values for
     var domainArray = [];
 
     /* *** ALL TESTING BOX *** */
@@ -312,20 +317,20 @@ function animateMap(yearExpressed, colorize, yearExpressedText, data){
         } else {
             yearExpressed = yearArray[yearArray.length-1];
             changeAttribute(yearExpressed, colorize);
-        }; 
+        };
     });
-    //play 
+    //play
     $(".play").click(function(){
         timer.play();
         $('.play').prop('disabled', false);
     });
-    //pause 
+    //pause
     $(".pause").click(function(){
         timer.pause();
         $('.play').prop('disabled', false);
         changeAttribute(yearExpressed, colorize);
     });
-    //step forward 
+    //step forward
     $(".stepForward").click(function(){
         if (yearExpressed < yearArray[yearArray.length-1]){
             yearExpressed++;
@@ -334,7 +339,7 @@ function animateMap(yearExpressed, colorize, yearExpressedText, data){
         } else {
             yearExpressed = yearArray[0];
             changeAttribute(yearExpressed, colorize);
-        }; 
+        };
     });
 }; //end animatemap
 
@@ -343,7 +348,7 @@ function animateMap(yearExpressed, colorize, yearExpressedText, data){
 function timeMapSequence(yearsExpressed) {
     changeAttribute(yearExpressed, colorize);
     if (yearsExpressed < yearArray[yearArray.length-1]){
-        yearExpressed++; 
+        yearExpressed++;
     };
 }; //end timeMapSequence
 
@@ -590,7 +595,7 @@ var timer = $.timer(function() {
             yearExpressed = yearArray[0];
         };
         animateMap(yearExpressed, colorize, yearExpressedText);
-        timeMapSequence(yearExpressed);  
+        timeMapSequence(yearExpressed);
     });
 timer.set({ time : 800, autostart : false });
 
@@ -598,3 +603,64 @@ timer.set({ time : 800, autostart : false });
 function storeData(data) {
     file = data;
 };
+
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .1);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(10, "%");
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.tsv("data.tsv", type, function(error, data) {
+  if (error) throw error;
+
+  x.domain(data.map(function(d) { return d.letter; }));
+  y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Frequency");
+
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.letter); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.frequency); })
+      .attr("height", function(d) { return height - y(d.frequency); });
+});
+
+function type(d) {
+  d.frequency = +d.frequency;
+  return d;
+}
