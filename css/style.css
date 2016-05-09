@@ -39,6 +39,17 @@
   font-size: 30px;
 }
 
+p2{
+  float:right;
+  width: 80%;
+}
+
+.info{
+  margin-top: 200px;
+  box-sizing: content-box;
+  position:absolute;
+  width: 800px;
+}
 
 .page-header {
     margin-top: 0px;
