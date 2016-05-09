@@ -80,8 +80,8 @@ var symbolSet = false; // variable activating function
 window.onload = initialize();
 
 function initialize(){
-  expressed = topicArray[0];
-  yearExpressed = yearArray[0];
+    expressed = topicArray[0];
+    yearExpressed = yearArray[38];
 
     //call setmap to set up the map
     setMap();
@@ -108,7 +108,7 @@ function setMap() {
     d3_queue.queue()
     //queue funcion loads external data asynchronously
         .defer(d3.csv, "../data/Law.csv") //laws by year
-        .defer(d3.csv,"../data/allExecutions_up.csv") //executions by year
+        .defer(d3.csv,"../data/allExecutions_up01.csv") //executions by year
         .defer(d3.json, "../data/continentalUS.topojson") //geometries
         .defer(d3.json, "../data/allExecutions.geojson") //geometries
         .await(callback);
@@ -141,12 +141,14 @@ function callback(error, Law, allExecutions, continentalUS, ex){
 
     };
 
+    //call function to animate the map to iterate over the years
+    animateMap(yearExpressed, colorize, yearExpressedText, allExecutions);
+
     // First implementation of choropleth and prop symbols
     implementState (csvArray[csv], joinedJson);
     setSymb(path, map, projection, allExecutions);
 
-    //call function to animate the map to iterate over the years
-    animateMap(yearExpressed, colorize, yearExpressedText, allExecutions);
+
 
 }; //callback end
 
@@ -309,7 +311,7 @@ function animateMap(yearExpressed, colorize, yearExpressedText, data){
         if (yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
             yearExpressed--;
             changeAttribute(yearExpressed, colorize);
-            setSymb(path, map, projection, data);
+            updateSymb(data);
         } else {
             yearExpressed = yearArray[yearArray.length-1];
             changeAttribute(yearExpressed, colorize);
@@ -331,6 +333,7 @@ function animateMap(yearExpressed, colorize, yearExpressedText, data){
         if (yearExpressed < yearArray[yearArray.length-1]){
             yearExpressed++;
             changeAttribute(yearExpressed, colorize);
+            updateSymb(data);
         } else {
             yearExpressed = yearArray[0];
             changeAttribute(yearExpressed, colorize);
@@ -404,7 +407,7 @@ function timeMapSequence(yearsExpressed) {
 
 
     //creates the menu items
-    function createMenu(arrayX, arrayY, title, infotext, infolink){
+    function createMenu(arrayX, arrayY, title, infotext, infolink) {
         var yArray = [40, 85, 130, 175, 220, 265];
         var oldItems = d3.selectAll(".menuBox").remove();
         var oldItems2 = d3.selectAll(".menuInfoBox").remove();
