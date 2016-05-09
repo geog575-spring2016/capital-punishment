@@ -49,12 +49,9 @@ var dataEXP = 1997;
 var yearExpressedText; //variable to store year expressed text
 //array for law variable
 var arrayLaw = [ "Legal",
-                  "Moratorium",
-                  "De Facto Moratorium",
-                  "Formal Hold",
                    "Illegal"];
 
-var colorArrayLaw  = [ "#b30000", "#e34a33", "#fc8d59", "#fdcc8a", "#fef0d9"];
+var colorArrayLaw  = [ "white", "grey"];
 //the map width is a function of window size
 var mapWidth = window.innerWidth * 0.7,
 mapHeight = 600;
