@@ -108,7 +108,7 @@ function setMap() {
     d3_queue.queue()
     //queue funcion loads external data asynchronously
         .defer(d3.csv, "../data/Law.csv") //laws by year
-        .defer(d3.csv,"../data/allExecutions_up01.csv") //executions by year
+        .defer(d3.csv,"../data/allExecutions_up.csv") //executions by year
         .defer(d3.json, "../data/continentalUS.topojson") //geometries
         .defer(d3.json, "../data/allExecutions.geojson") //geometries
         .await(callback);
