@@ -45,7 +45,6 @@ This variable is key and controls all values later on throughout
 ************************************************************** */
 var dataEXP = 1997;
 
-console.log("CRAZY TEST BUG CAN'T FIND");
 
 var yearExpressedText; //variable to store year expressed text
 //array for law variable
@@ -54,6 +53,7 @@ var arrayLaw = [ "Legal",
                   "De Facto Moratorium",
                   "Formal Hold",
                    "Illegal"];
+
 var colorArrayLaw  = [ "#b30000", "#e34a33", "#fc8d59", "#fdcc8a", "#fef0d9"];
 //the map width is a function of window size
 var mapWidth = window.innerWidth * 0.7,
@@ -73,6 +73,9 @@ var yearExpressed;
 // Global variables controling 'setSymbol' function
 var circles; // variable holding circle objects
 var symbolSet = false; // variable activating function
+
+// Global variable storing data file 
+var file;
 
 /* *** START PROGRAM *** */
 
@@ -96,6 +99,7 @@ function setMap() {
         .attr("class", "map")
         .attr("width", mapWidth)
         .attr("height", mapHeight);
+
 //set the projection for the US, equal area because choropeth
     projection = d3.geo.albers()
         .scale(1000)
@@ -110,7 +114,6 @@ function setMap() {
         .defer(d3.csv, "../data/Law.csv") //laws by year
         .defer(d3.csv,"../data/allExecutions_up.csv") //executions by year
         .defer(d3.json, "../data/continentalUS.topojson") //geometries
-        .defer(d3.json, "../data/allExecutions.geojson") //geometries
         .await(callback);
 
 }; //setmap is bye
@@ -118,11 +121,11 @@ function setMap() {
 //retrieve and process json file and data, same order as the queue function to load data
 //accepts errors from queue function as first argument
 
-function callback(error, Law, allExecutions, continentalUS, ex){
+function callback(error, Law, allExecutions, continentalUS){
     
+    console.log(Law);
     //variable to store the continentalUS json with all attribute data
-    joinedJson = topojson.feature(continentalUS,
-    continentalUS.objects.states).features;
+    joinedJson = topojson.feature(continentalUS, continentalUS.objects.states).features;
 
     //colorize is colorscale function called for the joined data
     colorize = colorScale(joinedJson);
@@ -147,8 +150,6 @@ function callback(error, Law, allExecutions, continentalUS, ex){
     // First implementation of choropleth and prop symbols
     implementState (csvArray[csv], joinedJson);
     setSymb(path, map, projection, allExecutions);
-
-
 
 }; //callback end
 
@@ -189,7 +190,7 @@ function joinData(topojson, csvData, attribute, json){
 
 };
 
-function implementState(csvData, json) {
+function implementState(csvData, json, data) {
     //style states according to the data
     var states = map.selectAll(".states")
         .data(json)
@@ -228,13 +229,15 @@ function setSymb (path, map, projection, data){
         .data(data)
         .enter()
         .append("circle")
-        .attr("class", function(d){
-            return "circles " + d.state; })
-        .attr("fill", "grey")
+        .attr("class", function(d) {
+            return "circles " + d.state; 
+        }).attr("fill", "grey")
         .attr('fill-opacity',0.75)
         .attr("cx", function(d) {
-            return projection([d.Longitude, d.Latitude])[0]; })
-        .attr("cy", function(d) { return projection([d.Longitude, d.Latitude])[1]; });
+            return projection([d.Longitude, d.Latitude])[0]; 
+        }).attr("cy", function(d) { 
+            return projection([d.Longitude, d.Latitude])[1]; 
+        });
 
         // set parameter true to deactivate script
         setSymb = true;
@@ -504,7 +507,7 @@ function colorScaleChart(data) {
 }; //end color for charts
 
 
-function choropleth(d, year, colorize){
+function choropleth(d, colorize){
 //conditional statement, setting data equal to
 var data = d.properties ? d.properties[expressed] : d;
 return colorScale(data);
@@ -784,3 +787,8 @@ var timer = $.timer(function() {
         timeMapSequence(yearExpressed);  
     });
 timer.set({ time : 800, autostart : false });
+
+// function stores data into 'file' variable
+function storeData(data) {
+    file = data;
+};
