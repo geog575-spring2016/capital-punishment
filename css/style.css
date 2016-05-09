@@ -1,6 +1,8 @@
 /******MAP STYLING******/
+
+
 #mainmap {
-    background: black;
+    background: none;
     margin: 0px;
     padding: 0px;
     top: 0px;
@@ -13,7 +15,7 @@
 
 
 .states {
-    stroke: white;
+    stroke: black;
     stroke-width: 0.5px;
 }
 

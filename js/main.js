@@ -1,24 +1,9 @@
-
-
 //bugs/issues to deal with:
 //1) determine how to label states separately (because now we're using the unique field = no spaces)
 //2) cycle over time (default to 2015 on load, on play, start at 1977 and sequence forward)- NATALEE
 //3) create proportional symbols (raw data for # executions per state in each year) = KAI & GABY
 //4) Add contextual information - KAI
 //5) Add pause/forward/back buttons - NATALEE
-
-
-//Meeting with Robin 5/2
-//PSEUDOCODING TIME SEQUENCING//
-//1) what is the currently selected year? store as a variable = yearExpressedText (DONE)
-//2) create the sequencing element (slider or play button, either jquery or d3) (DONE)
-//3) create # of notches on slider (exact # of years)
-//4) assign each notch a year
-//5) function to step forwards or backwards
-//6) call a function to change choro to corresponding year
-//7) update the label
-//8) update the timeline visualization
-//9) eventually update the prop symbols too :)
 
 
 //NOTES FROM PRESENTATION
@@ -29,12 +14,16 @@
 //4) a reset/home button?
 //5) why didn't our map appear? figure out what's going on with how it's showing up in different browsers. 
 ////firefox works for kai, chrome works for me
+//6) cartography focus: normalization
+//7) think about our default view
+//8) assign someone to do the styling and UI (consistent aesthetic style)
+
 
 //****GLOBAL VARIABLES****//
 var topicArray = ["Law",
                   "allExecutions"]; //the first item in this array will be the default
 
-//array for year"s
+//array for year's
 var yearArray = ["1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995","1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"];
 
 // NOTE: special array for the updated dataset that links to proportional symbols
@@ -67,11 +56,10 @@ var yearExpressedText; //variable to store year expressed text
 //array for law variable
 var arrayLaw = [ "Legal",
                   "Moratorium",
-                    "De Facto Moratorium",
+                  "De Facto Moratorium",
                   "Formal Hold",
                    "Illegal"];
-var colorArrayLaw      = [ "#b30000", "#e34a33", "#fc8d59", "#fdcc8a", "#fef0d9"
-];
+var colorArrayLaw  = [ "#b30000", "#e34a33", "#fc8d59", "#fdcc8a", "#fef0d9"];
 //the map width is a function of window size
 var mapWidth = window.innerWidth * 0.7,
 mapHeight = 600;
@@ -130,7 +118,7 @@ function callback(error, Law, allExecutions, continentalUS, ex){
     
     //variable to store the continentalUS json with all attribute data
     joinedJson = topojson.feature(continentalUS,
-        continentalUS.objects.states).features;
+    continentalUS.objects.states).features;
 
     //colorize is colorscale function called for the joined data
     colorize = colorScale(joinedJson);
@@ -152,10 +140,6 @@ function callback(error, Law, allExecutions, continentalUS, ex){
     implementState (csvArray[csv], joinedJson);
 
     setSymbols(path, map, allExecutions, projection);
-
-    //call the function to create the menu, law choropleth as default on load
-    drawMenu();
-
 
 }; //callback end
 
@@ -291,67 +275,46 @@ function newPropSymb(circles, data) {
             .style({'font-size':'36px', 'font-weight': 'strong'});
     }; //done with drawMenuInfo
 
-    //controls click events
-    function animateMap(yearExpressed, colorize, yearExpressedText){
-
-
-        var timer;  // create timer object
-        d3.select('#play')
-          .on('click', function() {  // when user clicks the play button
-            if(playing == false) { // if the map is currently playing
-              timer = setInterval(function(){   // set a JS interval
-                if(yearExpressed = 2015){
-                    yearExpressed = 1976,
-                    yearExpressed++;  // increment the current attribute counter
-                    changeAttribute(yearExpressed, colorize);
-                     setSymbols(path, map, allExecutions, projection);
-                } else {
-                    currentAttribute = 0;  // or reset it to zero
-                }
-                d3.select('#clock').html(yearExpressed);  // update the clock
-              }, 700);
-
-              d3.select(this).html('stop');  // change the button label to stop
-              playing = true;   // change the status of the animation
-            } else {    // else if is currently playing
-              clearInterval(timer);   // stop the animation by clearing the interval
-              d3.select(this).html('play');   // change the button label to play
-              playing = false;   // change the status again
-            }
-
-        });
-
-
-        var forwardbacktimer;  // create timer object
-        d3.select('#forward')
-          .on('click', function() {  // when user clicks the play button
-            if(playing == false) { // if the map is currently playing
-              timer = setInterval(function(){   // set a JS interval
-                if(yearExpressed < 2015){
-                    yearExpressed++;  // increment the current attribute counter
-                    changeAttribute(yearExpressed, colorize);
-                } else {
-                    currentAttribute = 0;  // or reset it to zero
-                }
-                d3.select('#clock').html(yearExpressed);  // update the clock
-              }, 1000);
-
-              d3.select(this).html('back');  // change the button label to stop
-              playing = true;   // change the status of the animation
-            } else {    // else if is currently playing
-              clearInterval(timer);   // stop the animation by clearing the interval
-              d3.select(this).html('forward');   // change the button label to play
-              playing = false;   // change the status again
-            }
-
-        });
-      }
+//vcr controls click events
+function animateMap(yearExpressed, colorize, yearExpressedText){
+    //step backward functionality
+    $(".stepBackward").click(function(){
+        if (yearExpressed <= yearArray[yearArray.length-1] && yearExpressed > yearArray[0]){
+            yearExpressed--;
+            changeAttribute(yearExpressed, colorize);
+        } else {
+            yearExpressed = yearArray[yearArray.length-1];
+            changeAttribute(yearExpressed, colorize);
+        }; 
+    });
+    //play 
+    $(".play").click(function(){
+        timer.play();
+        $('.play').prop('disabled', false);
+    });
+    //pause 
+    $(".pause").click(function(){
+        timer.pause();
+        $('.play').prop('disabled', false);
+        changeAttribute(yearExpressed, colorize);
+    });
+    //step forward 
+    $(".stepForward").click(function(){
+        if (yearExpressed < yearArray[yearArray.length-1]){
+            yearExpressed++;
+            changeAttribute(yearExpressed, colorize);
+        } else {
+            yearExpressed = yearArray[0];
+            changeAttribute(yearExpressed, colorize);
+        }; 
+    });
+}; //end animatemap
 
 
 //for play functionality
 function timeMapSequence(yearsExpressed) {
     changeAttribute(yearExpressed, colorize);
-    if (yearsExpressed < keyArray[keyArray.length-1]){
+    if (yearsExpressed < yearArray[yearArray.length-1]){
         yearExpressed++; 
     };
 }; //end timeMapSequence
@@ -783,8 +746,8 @@ function moveLabel(){
 
 // jQuery timer for play/pause
 var timer = $.timer(function() {
-        if (yearExpressed == keyArray[keyArray.length-1]){
-            yearExpressed = keyArray[0];
+        if (yearExpressed == yearArray[yearArray.length-1]){
+            yearExpressed = yearArray[0];
         };
         animateMap(yearExpressed, colorize, yearExpressedText);
         timeMapSequence(yearExpressed);  
